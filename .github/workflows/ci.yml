@@ -1,0 +1,44 @@
+name: build-and-test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Restore, build and test (.NET 8 / Windows)
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: '**/Directory.Packages.props'
+
+      - name: Restore
+        run: dotnet restore .\SASD.LearningManager.sln
+
+      - name: Build
+        run: dotnet build .\SASD.LearningManager.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test .\SASD.LearningManager.sln -c Release --no-build --logger "trx;LogFileName=tests.trx"
+
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/**/*.trx'
+          if-no-files-found: ignore

@@ -16,5 +16,6 @@
   ],
   "defaultBranch": "main",
   "licenseStatus": "not yet decided",
-  "status": "pre-implementation specification baseline"
+  "status": "Milestone 2 implemented",
+  "current_milestone": 2
 }

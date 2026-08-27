@@ -1,7 +1,7 @@
 # Project Initialization Record
 
 **Datum:** 2026-08-27  
-**Status:** Prepared / vor Code-Repository
+**Status:** Milestone 0 implemented / Milestone 1 code baseline prepared
 
 ## Produktidentität
 
@@ -10,12 +10,12 @@
 | Name | SASD Learning Manager |
 | Repository | `SASD-Learning-Manager` |
 | Namespace | `SASD.LearningManager` |
-| Sprache | C# |
+| Sprache | C# 12 |
 | Runtime | .NET 8 |
 | UI | WinForms |
 | Persistenz | SQLite |
 
-## Solution
+## Initialisierte Solution
 
 ```text
 SASD.LearningManager.sln
@@ -31,24 +31,35 @@ tests/
 └── SASD.LearningManager.Architecture.Tests/
 ```
 
-## M0 Quality Gate
+## M0-Baseline
 
-```text
-restore → success
-build Release → 0 errors
-unit/integration tests → green
-MainForm → starts
-SQLite DB → created
-Migration 0001 → applied
-Architecture Tests → green
-```
+Implementiert:
 
-## Vor Schema Freeze zu akzeptieren
+- Generic Host und DI
+- lokales Logging
+- SQLite Connection Factory
+- Migration Runner mit Checksums
+- MainForm Shell
+- Single Instance
+- Architecture Tests
+- GitHub Actions CI
 
-1. `null + 1..5` Skill-Level.
-2. fachliche Enums als TEXT.
-3. UTC ISO-8601 TEXT.
-4. GUID als Entity ID.
-5. WAL erst nach Backup-PoC.
+## Qualitätsprüfung in der Erstellungsumgebung
 
-**Ready for Milestone 0 after documentation review.**
+- Projekt-/XML-Struktur: PASS
+- ProjectReference-Auflösung: PASS
+- SQL Migration 0001/0002: PASS
+- SQLite Foreign Keys: PASS
+- SQLite `integrity_check`: PASS
+- C# struktureller Delimiter-Check: PASS
+- echter `dotnet build/test`: nicht in dieser Umgebung ausführbar; siehe `BUILD-VERIFY.md`
+
+## Schemaentscheidungen M0/M1
+
+- fachliche Enums: TEXT
+- UTC-Zeitwerte: ISO-8601 TEXT
+- GUID: Entity IDs
+- WAL: noch nicht aktiviert; erst nach Backup-PoC in M7
+- Skill-Level: wird in M3 final wirksam
+
+**Next:** Milestone 2 – Quick Capture & Inbox nach lokalem Compiler-/CI-Nachweis des M1-Stands.

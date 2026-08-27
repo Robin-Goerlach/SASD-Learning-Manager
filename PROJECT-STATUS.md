@@ -4,34 +4,45 @@
 
 ## Phase
 
-Specification / Architecture Baseline. Produktcode noch nicht begonnen.
+Implementation. **Milestone 0, Milestone 1 und Milestone 2 sind als Code-Stand umgesetzt.**
 
-## Erledigt
+## Implementiert
 
-- [x] Vorlagen-/Marktrecherche
-- [x] Lastenheft
-- [x] Pflichtenheft
-- [x] Architektur
-- [x] GUI-Mockup
-- [x] Project Brief/Klassifikation
-- [x] Roadmap/Milestones
-- [x] Datenmodell
-- [x] Teststrategie
-- [x] Security/Operations
-- [x] ADR-Entwürfe
+- [x] Solution / Layered Modular Monolith
+- [x] Domain / Application / Infrastructure / WinForms
+- [x] SQLite + Migration Runner
+- [x] Logging / DI / Generic Host
+- [x] Single Instance
+- [x] Providerverwaltung
+- [x] Resource Library
+- [x] Tags
+- [x] Search / Filter / Paging
+- [x] URL-Dublettenwarnung
+- [x] Archive / Restore
+- [x] Quick Capture
+- [x] `Ctrl+Shift+N`
+- [x] dedizierte Inbox
+- [x] Inbox-Klassifikation
+- [x] Domain/Application/Infrastructure/Architecture Tests
+- [x] GitHub Actions CI
+
+## Build-Korrekturen aus den Windows-Tests
+
+- [x] Namespace-Konflikt bei `Application.Run` korrigiert
+- [x] xUnit1051 durch `TestContext.Current.CancellationToken` korrigiert
+- [x] xUnit2017 in `ResourceServiceTests.cs` korrigiert: `Assert.True(collection.Contains(...))` wurde durch die passende `Assert.Contains(..., comparer)`-Assertion ersetzt.
+
+Der Windows-Build vom 27.08.2026 erreichte bereits erfolgreich Domain, Application, Infrastructure, WinForms sowie die übrigen Testassemblies; der gemeldete Abbruch lag ausschließlich an diesem Analyzerfehler im Application-Testprojekt. Ein erneuter vollständiger Build/Test-Lauf ist nach dem Hotfix weiterhin erforderlich.
+
+## Lokale Verifikation in der Erstellungsumgebung
+
+- SQLite-Migrationen: **PASS**
+- M2 Inbox Query gegen SQLite: **PASS**
+- Foreign-Key-Check: **PASS**
+- SQLite Integrity Check: **PASS**
+- Projekt-/XML-/Referenzstruktur: geprüft
+- echter .NET-Build: in dieser Umgebung weiterhin nicht möglich (kein SDK / kein DNS zur Nachinstallation)
 
 ## Als Nächstes
 
-1. Dokumentbaseline reviewen.
-2. fundamentale ADRs akzeptieren.
-3. Repository anlegen.
-4. Milestone 0 implementieren.
-5. reale Build/Test-Evidenz dokumentieren.
-
-## Blocker
-
-Keine fachlichen Blocker. Vor der ersten produktiven Migration sind Skill-Level, Enum-Format und WAL-Entscheidung zu bestätigen.
-
-## Scope Freeze
-
-Neue Ideen werden in `ROADMAP.md` unter V1.x/V2/Later gesammelt und nicht automatisch in V1 aufgenommen.
+Milestone 3: **Goals & Skills**.

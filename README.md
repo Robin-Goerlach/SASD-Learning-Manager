@@ -2,7 +2,7 @@
 
 > Persönlicher, anbieterunabhängiger Learning-Portfolio- und Competency-Manager für strukturierte Weiterbildung.
 
-**Status:** Pre-Implementation / Specification Baseline  
+**Status:** Milestone 0 + Milestone 1 + Milestone 2 – implementierter Code-Stand  
 **Stand:** 2026-08-27  
 **Zielplattform:** Windows 11  
 **Technologie:** C# / .NET 8 / Windows Forms / SQLite  
@@ -80,8 +80,8 @@ Nicht V1: eigener PDF-/Video-Reader, Cloud Sync, Mehrbenutzerbetrieb, Provider-L
 │   ├── governance/
 │   ├── release/
 │   └── user/
-├── src/                  # wird ab Milestone 0 mit realen Projekten gefüllt
-├── tests/                # wird ab Milestone 0 mit realen Testprojekten gefüllt
+├── src/                  # Domain / Application / Infrastructure / WinForms
+├── tests/                # Domain / Application / Infrastructure / Architecture Tests
 ├── PROJECT-BRIEF.md
 ├── PROJECT-STATUS.md
 ├── ROADMAP.md
@@ -93,7 +93,39 @@ Nicht V1: eigener PDF-/Video-Reader, Cloud Sync, Mehrbenutzerbetrieb, Provider-L
 
 Siehe [`DOCUMENTATION-INDEX.md`](DOCUMENTATION-INDEX.md).
 
-## Build-Ziel ab Milestone 0
+## Aktueller Implementierungsstand
+
+Milestone 0, Milestone 1 und Milestone 2 sind als Code-Stand enthalten. Implementiert sind derzeit:
+
+- Providerverwaltung
+- Ressourcenbibliothek
+- Ressource anlegen und bearbeiten
+- Tags
+- Suche, Filter und Paging
+- Fortschritt, Status und Priorität
+- sichere HTTP/HTTPS-URL-Öffnung
+- URL-Dublettenwarnung
+- Archivieren und Wiederherstellen
+- SQLite-Migrationen und ActivityLog
+- lokale Logs und Single-Instance-Schutz
+
+Die übrigen Navigationspunkte bleiben absichtlich sichtbar, aber deaktiviert; sie werden in den folgenden Milestones implementiert.
+
+Siehe [`docs/development/MILESTONE-1-IMPLEMENTATION.md`](docs/development/MILESTONE-1-IMPLEMENTATION.md).
+
+## Milestone 2 – Quick Capture & Inbox
+
+Aktuell zusätzlich nutzbar:
+
+- `Ctrl+Shift+N` für schnelles URL-Capture
+- optionale Titel-/Capture-Notiz
+- automatische Inbox
+- URL-Dublettenprüfung mit expliziter Konfliktentscheidung
+- Inbox-Suche und Paging
+- Klassifikation in den vollständigen Resource Editor
+- reversibles Verwerfen/Archivieren
+
+## Build und Tests
 
 ```powershell
 dotnet restore .\SASD.LearningManager.sln
@@ -102,6 +134,8 @@ dotnet test .\SASD.LearningManager.sln -c Release --no-build
 ```
 
 Ziel: **0 Fehler, 0 Warnungen, alle Tests grün**.
+
+Eine ausführliche Verifikation steht in [`BUILD-VERIFY.md`](BUILD-VERIFY.md). GitHub Actions führt denselben Restore-/Build-/Test-Flow auf Windows aus.
 
 ## Datenpfad
 
