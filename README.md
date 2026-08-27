@@ -1,0 +1,2 @@
+# SASD-Learning-Manager
+Local-first Windows-Desktop-App zur strukturierten Planung und Dokumentation persönlicher Weiterbildung über O’Reilly, LinkedIn Learning, YouTube, Udemy, Bücher, Doku und Labs. Verknüpft Lernziele, Skills, Learning Paths, Ressourcen, Fortschritt, Wissen und Evidence. C#/.NET 8, WinForms, SQLite.
