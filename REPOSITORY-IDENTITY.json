@@ -1,0 +1,20 @@
+{
+  "name": "SASD-Learning-Manager",
+  "displayName": "SASD Learning Manager",
+  "description": "Local-first Windows-Desktop-App zur strukturierten Planung und Dokumentation persönlicher Weiterbildung über O’Reilly, LinkedIn Learning, YouTube, Udemy, Bücher, Doku und Labs. Verknüpft Lernziele, Skills, Learning Paths, Ressourcen, Fortschritt, Wissen und Evidence. C#/.NET 8, WinForms, SQLite.",
+  "visibilityRecommendation": "private during pre-implementation; decide before public release",
+  "topics": [
+    "learning-manager",
+    "personal-learning",
+    "learning-paths",
+    "skills",
+    "competency-management",
+    "dotnet",
+    "winforms",
+    "sqlite",
+    "local-first"
+  ],
+  "defaultBranch": "main",
+  "licenseStatus": "not yet decided",
+  "status": "pre-implementation specification baseline"
+}

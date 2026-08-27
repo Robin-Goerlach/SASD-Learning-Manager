@@ -1,0 +1,30 @@
+name: Bug report
+description: Reproduzierbaren Fehler melden
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Beobachtetes Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduktion
+      description: Schritte und minimaler reproduzierbarer Ablauf. Keine privaten Lerninhalte hochladen.
+  - type: input
+    id: version
+    attributes:
+      label: Version / Commit
+  - type: input
+    id: errorid
+    attributes:
+      label: Fehler-ID

@@ -1,0 +1,30 @@
+name: Feature request
+description: Vorschlag für eine fachliche oder technische Erweiterung
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Nutzen
+      description: Welches konkrete Problem soll gelöst werden?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Vorschlag
+      description: Wie könnte die Lösung aussehen?
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - V1 Core prüfen
+        - V1.x
+        - V2+
+        - Noch offen
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Bezug zu Requirements / ADRs
