@@ -1,8 +1,9 @@
-SASD Learning Manager – Milestone 3 Repository Manifest
-Generated: 2026-08-27
+SASD Learning Manager – Milestone 4 Hotfix 001 Repository Manifest
+Generated: 2026-08-28
 
-Milestone 0-2 baseline: Windows build 0 warnings / 0 errors, 29/29 tests green (user-verified).
-Milestone 3: Goals & Skills implemented; expected test inventory 48 facts; final Windows build/test pending.
+Verified baseline: Milestone 3 – Windows build 0 warnings / 0 errors / 48/48 tests green.
+Milestone 4: Learning Paths implemented. First M4 delivery failed because TestDoubles.cs line 275 was malformed; Hotfix 001 repairs the generated source block.
+Expected M4 test inventory: 64 facts; final Windows build/test pending.
 
 .editorconfig
 .gitattributes
@@ -55,6 +56,9 @@ docs/development/MILESTONE-1-IMPLEMENTATION.md
 docs/development/MILESTONE-2-HOTFIX-001.md
 docs/development/MILESTONE-2-IMPLEMENTATION.md
 docs/development/MILESTONE-3-IMPLEMENTATION.md
+docs/development/MILESTONE-4-HOTFIX-001-VERIFICATION.txt
+docs/development/MILESTONE-4-HOTFIX-001.md
+docs/development/MILESTONE-4-IMPLEMENTATION.md
 docs/governance/GLOSSARY.md
 docs/governance/SASD-COMPLIANCE.md
 docs/governance/SASD-DESKTOP-COMPLIANCE.md
@@ -84,6 +88,9 @@ src/SASD.LearningManager.Application/Competencies/ICompetencyCatalogRepository.c
 src/SASD.LearningManager.Application/Goals/GoalDtos.cs
 src/SASD.LearningManager.Application/Goals/GoalService.cs
 src/SASD.LearningManager.Application/Goals/IGoalRepository.cs
+src/SASD.LearningManager.Application/LearningPaths/ILearningPathRepository.cs
+src/SASD.LearningManager.Application/LearningPaths/LearningPathDtos.cs
+src/SASD.LearningManager.Application/LearningPaths/LearningPathService.cs
 src/SASD.LearningManager.Application/Providers/IProviderRepository.cs
 src/SASD.LearningManager.Application/Providers/ProviderDtos.cs
 src/SASD.LearningManager.Application/Providers/ProviderService.cs
@@ -104,6 +111,11 @@ src/SASD.LearningManager.Domain/Competencies/CompetencyEnums.cs
 src/SASD.LearningManager.Domain/Competencies/Topic.cs
 src/SASD.LearningManager.Domain/Goals/Goal.cs
 src/SASD.LearningManager.Domain/Goals/GoalEnums.cs
+src/SASD.LearningManager.Domain/LearningPaths/LearningPath.cs
+src/SASD.LearningManager.Domain/LearningPaths/LearningPathEnums.cs
+src/SASD.LearningManager.Domain/LearningPaths/LearningPathNode.cs
+src/SASD.LearningManager.Domain/LearningPaths/LearningPathNodeRelation.cs
+src/SASD.LearningManager.Domain/LearningPaths/LearningPathProgress.cs
 src/SASD.LearningManager.Domain/Providers/Provider.cs
 src/SASD.LearningManager.Domain/Providers/ProviderEnums.cs
 src/SASD.LearningManager.Domain/Resources/Resource.cs
@@ -121,8 +133,10 @@ src/SASD.LearningManager.Infrastructure/Persistence/DatabaseInitializer.cs
 src/SASD.LearningManager.Infrastructure/Persistence/Migrations/0001_baseline.sql
 src/SASD.LearningManager.Infrastructure/Persistence/Migrations/0002_resource_library.sql
 src/SASD.LearningManager.Infrastructure/Persistence/Migrations/0003_goals_skills.sql
+src/SASD.LearningManager.Infrastructure/Persistence/Migrations/0004_learning_paths.sql
 src/SASD.LearningManager.Infrastructure/Persistence/Repositories/CompetencyCatalogRepository.cs
 src/SASD.LearningManager.Infrastructure/Persistence/Repositories/GoalRepository.cs
+src/SASD.LearningManager.Infrastructure/Persistence/Repositories/LearningPathRepository.cs
 src/SASD.LearningManager.Infrastructure/Persistence/Repositories/ProviderRepository.cs
 src/SASD.LearningManager.Infrastructure/Persistence/Repositories/ResourceRepository.cs
 src/SASD.LearningManager.Infrastructure/Persistence/Repositories/SkillRepository.cs
@@ -134,6 +148,9 @@ src/SASD.LearningManager.WinForms/Forms/CompetencyAreaEditForm.cs
 src/SASD.LearningManager.WinForms/Forms/CompetencyCatalogForm.cs
 src/SASD.LearningManager.WinForms/Forms/DuplicateResourceForm.cs
 src/SASD.LearningManager.WinForms/Forms/GoalEditForm.cs
+src/SASD.LearningManager.WinForms/Forms/LearningPathEditForm.cs
+src/SASD.LearningManager.WinForms/Forms/LearningPathNodeEditForm.cs
+src/SASD.LearningManager.WinForms/Forms/LearningPathRelationsForm.cs
 src/SASD.LearningManager.WinForms/Forms/MainForm.cs
 src/SASD.LearningManager.WinForms/Forms/ProviderEditForm.cs
 src/SASD.LearningManager.WinForms/Forms/ProviderManagementForm.cs
@@ -148,10 +165,12 @@ src/SASD.LearningManager.WinForms/Program.cs
 src/SASD.LearningManager.WinForms/SASD.LearningManager.WinForms.csproj
 src/SASD.LearningManager.WinForms/Views/GoalsView.cs
 src/SASD.LearningManager.WinForms/Views/InboxView.cs
+src/SASD.LearningManager.WinForms/Views/LearningPathsView.cs
 src/SASD.LearningManager.WinForms/Views/ResourcesView.cs
 src/SASD.LearningManager.WinForms/Views/SkillsView.cs
 tests/SASD.LearningManager.Application.Tests/CompetencyCatalogServiceTests.cs
 tests/SASD.LearningManager.Application.Tests/GoalServiceTests.cs
+tests/SASD.LearningManager.Application.Tests/LearningPathServiceTests.cs
 tests/SASD.LearningManager.Application.Tests/ResourceServiceTests.cs
 tests/SASD.LearningManager.Application.Tests/SASD.LearningManager.Application.Tests.csproj
 tests/SASD.LearningManager.Application.Tests/SkillServiceTests.cs
@@ -161,6 +180,7 @@ tests/SASD.LearningManager.Architecture.Tests/LayerDependencyTests.cs
 tests/SASD.LearningManager.Architecture.Tests/SASD.LearningManager.Architecture.Tests.csproj
 tests/SASD.LearningManager.Domain.Tests/CompetencyTests.cs
 tests/SASD.LearningManager.Domain.Tests/GoalTests.cs
+tests/SASD.LearningManager.Domain.Tests/LearningPathTests.cs
 tests/SASD.LearningManager.Domain.Tests/ProviderTests.cs
 tests/SASD.LearningManager.Domain.Tests/ResourceTests.cs
 tests/SASD.LearningManager.Domain.Tests/SASD.LearningManager.Domain.Tests.csproj

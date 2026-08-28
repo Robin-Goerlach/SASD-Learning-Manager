@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "sourceSystem": "SASD Mail Workbench",
+  "messages": [
+    {
+      "externalMessageId": "synthetic-message-001",
+      "direction": "Incoming",
+      "kind": "Recruiter",
+      "fromName": "Erika Beispiel",
+      "fromAddress": "erika@example.invalid",
+      "toAddresses": "user@example.invalid",
+      "subject": "Rückmeldung zu Ihrer Bewerbung",
+      "bodyText": "Vielen Dank für das Gespräch. Wir möchten Sie zu einem weiteren Termin einladen.",
+      "messageAtUtc": "2026-08-27T08:00:00+00:00",
+      "sourceReference": "Inbox/Synthetic"
+    },
+    {
+      "externalMessageId": "synthetic-alert-001",
+      "direction": "Incoming",
+      "kind": "JobAlert",
+      "fromName": "Example Jobs",
+      "fromAddress": "alerts@example.invalid",
+      "toAddresses": "user@example.invalid",
+      "subject": "Neue Stellen für Linux",
+      "bodyText": "Senior Linux Engineer\nhttps://example.invalid/jobs/linux-1",
+      "messageAtUtc": "2026-08-27T08:15:00+00:00",
+      "sourceReference": "Inbox/Synthetic"
+    }
+  ]
+}

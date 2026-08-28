@@ -1,0 +1,66 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Domain", "src\SASD.Bewerbungsmanager.Domain\SASD.Bewerbungsmanager.Domain.csproj", "{D0260D49-F8E9-5E3B-98C3-437C46C81660}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Application", "src\SASD.Bewerbungsmanager.Application\SASD.Bewerbungsmanager.Application.csproj", "{A19F2258-85A6-5074-8928-3EB52C6D591D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Infrastructure", "src\SASD.Bewerbungsmanager.Infrastructure\SASD.Bewerbungsmanager.Infrastructure.csproj", "{8273CF29-9AD2-5BCA-AA94-70019188CA4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.WinForms", "src\SASD.Bewerbungsmanager.WinForms\SASD.Bewerbungsmanager.WinForms.csproj", "{1D465CD9-F136-5700-AF9C-6FA80386BDB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Domain.Tests", "tests\SASD.Bewerbungsmanager.Domain.Tests\SASD.Bewerbungsmanager.Domain.Tests.csproj", "{F75B1B81-41F8-5CEE-ACE9-D651B01A5F93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Application.Tests", "tests\SASD.Bewerbungsmanager.Application.Tests\SASD.Bewerbungsmanager.Application.Tests.csproj", "{D54B37D8-0FEE-53C0-B531-9DDF32BD7406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Infrastructure.Tests", "tests\SASD.Bewerbungsmanager.Infrastructure.Tests\SASD.Bewerbungsmanager.Infrastructure.Tests.csproj", "{443333F2-D3AE-5147-87C9-28B1E56A22E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.Presentation.Tests", "tests\SASD.Bewerbungsmanager.Presentation.Tests\SASD.Bewerbungsmanager.Presentation.Tests.csproj", "{8753C037-71B6-5D48-974D-4273DA29173A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SASD.Bewerbungsmanager.SystemTests", "tests\SASD.Bewerbungsmanager.SystemTests\SASD.Bewerbungsmanager.SystemTests.csproj", "{C12C92F6-13F5-5942-9944-52317EB5CD73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0260D49-F8E9-5E3B-98C3-437C46C81660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0260D49-F8E9-5E3B-98C3-437C46C81660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0260D49-F8E9-5E3B-98C3-437C46C81660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0260D49-F8E9-5E3B-98C3-437C46C81660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A19F2258-85A6-5074-8928-3EB52C6D591D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A19F2258-85A6-5074-8928-3EB52C6D591D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A19F2258-85A6-5074-8928-3EB52C6D591D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A19F2258-85A6-5074-8928-3EB52C6D591D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8273CF29-9AD2-5BCA-AA94-70019188CA4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8273CF29-9AD2-5BCA-AA94-70019188CA4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8273CF29-9AD2-5BCA-AA94-70019188CA4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8273CF29-9AD2-5BCA-AA94-70019188CA4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D465CD9-F136-5700-AF9C-6FA80386BDB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D465CD9-F136-5700-AF9C-6FA80386BDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D465CD9-F136-5700-AF9C-6FA80386BDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D465CD9-F136-5700-AF9C-6FA80386BDB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F75B1B81-41F8-5CEE-ACE9-D651B01A5F93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F75B1B81-41F8-5CEE-ACE9-D651B01A5F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F75B1B81-41F8-5CEE-ACE9-D651B01A5F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F75B1B81-41F8-5CEE-ACE9-D651B01A5F93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D54B37D8-0FEE-53C0-B531-9DDF32BD7406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D54B37D8-0FEE-53C0-B531-9DDF32BD7406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D54B37D8-0FEE-53C0-B531-9DDF32BD7406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D54B37D8-0FEE-53C0-B531-9DDF32BD7406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{443333F2-D3AE-5147-87C9-28B1E56A22E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{443333F2-D3AE-5147-87C9-28B1E56A22E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{443333F2-D3AE-5147-87C9-28B1E56A22E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{443333F2-D3AE-5147-87C9-28B1E56A22E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8753C037-71B6-5D48-974D-4273DA29173A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8753C037-71B6-5D48-974D-4273DA29173A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8753C037-71B6-5D48-974D-4273DA29173A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8753C037-71B6-5D48-974D-4273DA29173A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C12C92F6-13F5-5942-9944-52317EB5CD73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C12C92F6-13F5-5942-9944-52317EB5CD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C12C92F6-13F5-5942-9944-52317EB5CD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C12C92F6-13F5-5942-9944-52317EB5CD73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

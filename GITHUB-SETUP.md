@@ -49,4 +49,6 @@ Empfohlen für `main`:
 
 ## Actions
 
-Diese ZIP enthält noch **keinen Build-Workflow**, weil noch keine `.sln` existiert. Milestone 0 erzeugt Solution und Tests und fügt anschließend eine echte `dotnet restore/build/test`-Action hinzu. So bleibt das Repository von Anfang an grün statt mit einer absichtlich fehlschlagenden CI zu starten.
+Seit Milestone 0 enthält das Repository eine Windows-basierte GitHub-Actions-CI für `dotnet restore`, `dotnet build` und `dotnet test`. Pull Requests auf `main` sollen diesen Statuscheck bestehen.
+
+Der zuletzt vollständig auf Windows bestätigte Stand ist Milestone 3 mit 0 Warnungen, 0 Fehlern und 48/48 Tests. Milestone 4 Hotfix 001 behebt den fehlerhaften Testquelltext der ersten M4-ZIP und ist erneut auf Windows zu verifizieren.

@@ -6,13 +6,14 @@ using SASD.LearningManager.WinForms.Views;
 namespace SASD.LearningManager.WinForms.Forms;
 
 /// <summary>
-/// Main application shell. Milestone 3 adds active Goals and Skills workspaces while retaining the
-/// Resource Library, Inbox and global Quick Capture from the previous milestones.
+/// Main application shell. Milestone 4 activates Learning Paths with a hierarchical editor while
+/// retaining Goals, Skills, Resource Library, Inbox and global Quick Capture.
 /// </summary>
 public sealed class MainForm : Form
 {
     private readonly GoalsView _goalsView;
     private readonly SkillsView _skillsView;
+    private readonly LearningPathsView _learningPathsView;
     private readonly ResourcesView _resourcesView;
     private readonly InboxView _inboxView;
     private readonly ResourceService _resourceService;
@@ -26,12 +27,14 @@ public sealed class MainForm : Form
     };
     private Button? _goalsButton;
     private Button? _skillsButton;
+    private Button? _learningPathsButton;
     private Button? _resourcesButton;
     private Button? _inboxButton;
 
     public MainForm(
         GoalsView goalsView,
         SkillsView skillsView,
+        LearningPathsView learningPathsView,
         ResourcesView resourcesView,
         InboxView inboxView,
         ResourceService resourceService,
@@ -40,6 +43,7 @@ public sealed class MainForm : Form
     {
         _goalsView = goalsView;
         _skillsView = skillsView;
+        _learningPathsView = learningPathsView;
         _resourcesView = resourcesView;
         _inboxView = inboxView;
         _resourceService = resourceService;
@@ -106,7 +110,9 @@ public sealed class MainForm : Form
         _goalsButton.Click += (_, _) => ShowGoals();
         nav.Controls.Add(_goalsButton);
 
-        nav.Controls.Add(CreateNavButton("Lernpfade", enabled: false));
+        _learningPathsButton = CreateNavButton("Lernpfade", enabled: true);
+        _learningPathsButton.Click += (_, _) => ShowLearningPaths();
+        nav.Controls.Add(_learningPathsButton);
 
         _skillsButton = CreateNavButton("Skills", enabled: true);
         _skillsButton.Click += (_, _) => ShowSkills();
@@ -186,6 +192,17 @@ public sealed class MainForm : Form
         _ = _goalsView.RefreshAsync();
     }
 
+
+    private void ShowLearningPaths()
+    {
+        SetSelectedNavigation(_learningPathsButton);
+        _titleLabel.Text = "Learning Paths";
+        _contentPanel.Controls.Clear();
+        _learningPathsView.Dock = DockStyle.Fill;
+        _contentPanel.Controls.Add(_learningPathsView);
+        _ = _learningPathsView.RefreshAsync();
+    }
+
     private void ShowSkills()
     {
         SetSelectedNavigation(_skillsButton);
@@ -218,7 +235,7 @@ public sealed class MainForm : Form
 
     private void SetSelectedNavigation(Button? selected)
     {
-        foreach (var button in new[] { _goalsButton, _skillsButton, _resourcesButton, _inboxButton })
+        foreach (var button in new[] { _goalsButton, _learningPathsButton, _skillsButton, _resourcesButton, _inboxButton })
         {
             if (button is null)
             {

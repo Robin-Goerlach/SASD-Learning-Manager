@@ -33,6 +33,10 @@ public sealed class GoalService
     public Task<GoalDetailDto?> GetDetailAsync(Guid id, CancellationToken cancellationToken = default)
         => _repository.GetDetailAsync(id, cancellationToken);
 
+    /// <summary>Lists goals for relationship editors without exposing repository details to WinForms.</summary>
+    public Task<IReadOnlyList<GoalLookupDto>> ListLookupAsync(bool includeArchived, CancellationToken cancellationToken = default)
+        => _repository.ListLookupAsync(includeArchived, cancellationToken);
+
     public async Task<Guid> CreateAsync(GoalEditModel model, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(model);

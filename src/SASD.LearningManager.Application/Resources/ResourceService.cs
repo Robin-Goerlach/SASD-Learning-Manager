@@ -50,6 +50,10 @@ public sealed class ResourceService
     public Task<ResourceDetailDto?> GetDetailAsync(Guid id, CancellationToken cancellationToken = default)
         => _repository.GetDetailAsync(id, cancellationToken);
 
+    /// <summary>Lists resources for relationship editors without exposing persistence details to WinForms.</summary>
+    public Task<IReadOnlyList<ResourceLookupDto>> ListLookupAsync(bool includeArchived, CancellationToken cancellationToken = default)
+        => _repository.ListLookupAsync(includeArchived, cancellationToken);
+
     /// <summary>
     /// Captures a URL with the smallest useful data set and places it in the Inbox. Full
     /// classification is intentionally deferred so capture remains fast and interruption-free.

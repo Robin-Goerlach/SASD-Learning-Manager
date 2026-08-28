@@ -15,6 +15,9 @@ public sealed record GoalListItemDto(
     DateOnly? NextActionDueDate,
     DateTimeOffset UpdatedAtUtc);
 
+/// <summary>Compact goal option used by learning-path editors.</summary>
+public sealed record GoalLookupDto(Guid Id, string Title, GoalStatus Status);
+
 /// <summary>Full goal editor read model.</summary>
 public sealed record GoalDetailDto(
     Guid Id,

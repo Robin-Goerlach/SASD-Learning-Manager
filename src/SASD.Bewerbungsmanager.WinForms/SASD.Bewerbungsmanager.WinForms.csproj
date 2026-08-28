@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RootNamespace>SASD.Bewerbungsmanager.WinForms</RootNamespace>
+    <AssemblyName>SASD.Bewerbungsmanager.WinForms</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- ApplicationConfiguration.Initialize() reads this generated setting at startup. -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SASD.Bewerbungsmanager.Application\SASD.Bewerbungsmanager.Application.csproj" />
+    <ProjectReference Include="..\SASD.Bewerbungsmanager.Infrastructure\SASD.Bewerbungsmanager.Infrastructure.csproj" />
+    <ProjectReference Include="..\SASD.Bewerbungsmanager.Domain\SASD.Bewerbungsmanager.Domain.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

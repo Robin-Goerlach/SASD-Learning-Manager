@@ -95,6 +95,22 @@ public sealed class GoalRepository : IGoalRepository
         return new PagedResult<GoalListItemDto>(items, criteria.PageNumber, criteria.PageSize, total);
     }
 
+    public async Task<IReadOnlyList<GoalLookupDto>> ListLookupAsync(bool includeArchived, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _connectionFactory.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = includeArchived
+            ? "SELECT Id, Title, Status FROM Goals ORDER BY Title COLLATE NOCASE;"
+            : "SELECT Id, Title, Status FROM Goals WHERE Status <> 'Archived' ORDER BY Title COLLATE NOCASE;";
+        var items = new List<GoalLookupDto>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            items.Add(new GoalLookupDto(Guid.Parse(reader.GetString(0)), reader.GetString(1), Enum.Parse<GoalStatus>(reader.GetString(2))));
+        }
+        return items;
+    }
+
     public Task InsertAsync(Goal goal, IReadOnlyCollection<Guid> skillIds, CancellationToken cancellationToken = default)
         => SaveAsync(goal, skillIds, insert: true, cancellationToken);
 

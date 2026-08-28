@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SASD.LearningManager.Application.Abstractions;
 using SASD.LearningManager.Application.Competencies;
 using SASD.LearningManager.Application.Goals;
+using SASD.LearningManager.Application.LearningPaths;
 using SASD.LearningManager.Application.Providers;
 using SASD.LearningManager.Application.Resources;
 using SASD.LearningManager.Application.Skills;
@@ -27,11 +28,13 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ICompetencyCatalogRepository, CompetencyCatalogRepository>();
         services.AddTransient<ISkillRepository, SkillRepository>();
         services.AddTransient<IGoalRepository, GoalRepository>();
+        services.AddTransient<ILearningPathRepository, LearningPathRepository>();
         services.AddTransient<IResourceRepository, ResourceRepository>();
         services.AddTransient<ProviderService>();
         services.AddTransient<CompetencyCatalogService>();
         services.AddTransient<SkillService>();
         services.AddTransient<GoalService>();
+        services.AddTransient<LearningPathService>();
         services.AddTransient<ResourceService>();
         return services;
     }

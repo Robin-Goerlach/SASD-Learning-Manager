@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>SASD.Bewerbungsmanager.Domain</RootNamespace>
+    <AssemblyName>SASD.Bewerbungsmanager.Domain</AssemblyName>
+  </PropertyGroup>
+</Project>

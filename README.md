@@ -2,8 +2,8 @@
 
 > Persönlicher, anbieterunabhängiger Learning-Portfolio- und Competency-Manager für strukturierte Weiterbildung.
 
-**Status:** Milestone 0 bis Milestone 3 – implementierter Code-Stand  
-**Stand:** 2026-08-27  
+**Status:** Milestone 0 bis Milestone 4 – implementierter Code-Stand (M4 Hotfix 001)  
+**Stand:** 2026-08-28  
 **Zielplattform:** Windows 11  
 **Technologie:** C# / .NET 8 / Windows Forms / SQLite  
 **Entwicklungsstandard:** SASD Development Standard
@@ -95,7 +95,7 @@ Siehe [`DOCUMENTATION-INDEX.md`](DOCUMENTATION-INDEX.md).
 
 ## Aktueller Implementierungsstand
 
-Milestone 0 bis Milestone 3 sind als Code-Stand enthalten. Implementiert sind derzeit:
+Milestone 0 bis Milestone 4 sind als Code-Stand enthalten. **M4 Hotfix 001** behebt einen beschädigten Testdouble-Quelltext aus der ersten M4-ZIP; die produktiven M4-Assemblies hatten im gemeldeten Windows-Build bereits kompiliert. Der M3-Stand wurde auf Windows mit 0 Warnungen, 0 Fehlern und 48/48 grünen Tests bestätigt. Implementiert sind derzeit:
 
 - Providerverwaltung
 - Ressourcenbibliothek
@@ -112,10 +112,14 @@ Milestone 0 bis Milestone 3 sind als Code-Stand enthalten. Implementiert sind de
 - Competency Areas und Topics
 - Skills mit Current-/Target-Level und Skill Gap
 - append-only Skill Assessments mit Historie
+- Learning Paths mit TreeView-basierter Hierarchie
+- Required/Optional Nodes und Core Progress
+- Node↔Skill- und Node↔Resource-Zuordnungen
+- Node-Relationen und Zyklenschutz
 
-Ziele, Skills, Ressourcen und Inbox sind aktiv. Lernpfade, Wissen, Evidence und weitere Bereiche bleiben bis zu ihren Milestones sichtbar, aber deaktiviert.
+Ziele, Lernpfade, Skills, Ressourcen und Inbox sind aktiv. Wissen, Evidence und weitere Bereiche bleiben bis zu ihren Milestones sichtbar, aber deaktiviert.
 
-Siehe [`docs/development/MILESTONE-1-IMPLEMENTATION.md`](docs/development/MILESTONE-1-IMPLEMENTATION.md).
+Details zu den implementierten Ständen stehen unter `docs/development/`, zuletzt in [`MILESTONE-4-IMPLEMENTATION.md`](docs/development/MILESTONE-4-IMPLEMENTATION.md).
 
 ## Milestone 2 – Quick Capture & Inbox
 
@@ -142,6 +146,21 @@ Neu in diesem Stand:
 - Goal↔Skill ohne automatische Mastery-Änderung
 
 Details: [`docs/development/MILESTONE-3-IMPLEMENTATION.md`](docs/development/MILESTONE-3-IMPLEMENTATION.md).
+
+## Milestone 4 – Learning Paths
+
+Neu in diesem Stand:
+
+- Learning-Path-Library und Editor
+- hierarchische Nodes mit Parent/Child
+- Required/Optional
+- Skill- und Resource-Zuordnung
+- Move Up/Down und Parent-Wechsel mit Zyklenschutz
+- Subtree-Archivierung
+- Node-Relationen wie `Requires`, `AlternativeTo` und `Deepens`
+- Core Progress getrennt von optionalen Inhalten
+
+Details: [`docs/development/MILESTONE-4-IMPLEMENTATION.md`](docs/development/MILESTONE-4-IMPLEMENTATION.md).
 
 ## Build und Tests
 

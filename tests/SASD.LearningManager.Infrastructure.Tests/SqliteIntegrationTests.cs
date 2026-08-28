@@ -1,10 +1,12 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using SASD.LearningManager.Application.Competencies;
 using SASD.LearningManager.Application.Goals;
+using SASD.LearningManager.Application.LearningPaths;
 using SASD.LearningManager.Application.Resources;
 using SASD.LearningManager.Application.Skills;
 using SASD.LearningManager.Domain.Competencies;
 using SASD.LearningManager.Domain.Goals;
+using SASD.LearningManager.Domain.LearningPaths;
 using SASD.LearningManager.Domain.Resources;
 using SASD.LearningManager.Domain.Skills;
 using SASD.LearningManager.Infrastructure.Persistence;
@@ -234,4 +236,85 @@ public sealed class SqliteIntegrationTests : IAsyncLifetime
 
         Assert.False(await reader.ReadAsync(TestContext.Current.CancellationToken));
     }
+
+    [Fact]
+    public async Task M4Repository_RoundTripsPathNodesAssignmentsAndRelations()
+    {
+        var paths = new LearningPathRepository(_connectionFactory);
+        var skills = new SkillRepository(_connectionFactory);
+        var resources = new ResourceRepository(_connectionFactory);
+        var now = new DateTimeOffset(2026, 8, 28, 8, 0, 0, TimeSpan.Zero);
+        var skill = Skill.Create("Docker Networking", null, 4, now);
+        await skills.InsertAsync(skill, [], [], TestContext.Current.CancellationToken);
+        var resource = Resource.Create("Docker Course", ResourceType.Course, null, "https://example.test/docker-path",
+            "https://example.test/docker-path", null, null, null, null, null, null, null,
+            ResourceDifficulty.Beginner, ResourcePriority.High, ResourceStatus.Planned, now);
+        await resources.InsertAsync(resource, [], TestContext.Current.CancellationToken);
+        var path = LearningPath.Create("Docker Refresher", null, LearningPathStatus.Active, LearningPathPriority.High,
+            null, null, "Networking", null, now);
+        await paths.InsertAsync(path, [], TestContext.Current.CancellationToken);
+        var module = LearningPathNode.Create(path.Id, null, "Networking", null, LearningPathNodeType.Module, 0, true, now);
+        await paths.InsertNodeAsync(module, [skill.Id], [resource.Id], TestContext.Current.CancellationToken);
+        var lab = LearningPathNode.Create(path.Id, module.Id, "Lab", null, LearningPathNodeType.Activity, 0, false, now);
+        await paths.InsertNodeAsync(lab, [], [], TestContext.Current.CancellationToken);
+        var relation = LearningPathNodeRelation.Create(module.Id, lab.Id, LearningPathNodeRelationType.RecommendedBefore, "Course before lab", now);
+        await paths.InsertRelationAsync(relation, TestContext.Current.CancellationToken);
+
+        var detail = await paths.GetNodeDetailAsync(module.Id, TestContext.Current.CancellationToken);
+        var nodes = await paths.ListNodesAsync(path.Id, includeArchived: false, TestContext.Current.CancellationToken);
+        var relations = await paths.ListRelationsAsync(path.Id, TestContext.Current.CancellationToken);
+
+        Assert.NotNull(detail);
+        Assert.Contains(skill.Id, detail.SkillIds);
+        Assert.Contains(resource.Id, detail.ResourceIds);
+        Assert.Equal(2, nodes.Count);
+        var savedRelation = Assert.Single(relations);
+        Assert.Equal(LearningPathNodeRelationType.RecommendedBefore, savedRelation.Type);
+    }
+
+    [Fact]
+    public async Task M4Search_ComputesCoreProgressFromRequiredNodes()
+    {
+        var paths = new LearningPathRepository(_connectionFactory);
+        var now = new DateTimeOffset(2026, 8, 28, 8, 0, 0, TimeSpan.Zero);
+        var path = LearningPath.Create("Performance", null, LearningPathStatus.Active, LearningPathPriority.High,
+            null, null, null, null, now);
+        await paths.InsertAsync(path, [], TestContext.Current.CancellationToken);
+        var done = LearningPathNode.Create(path.Id, null, "CPU", null, LearningPathNodeType.Topic, 0, true, now);
+        done.Update("CPU", null, LearningPathNodeType.Topic, true, LearningPathNodeStatus.Completed, now);
+        var open = LearningPathNode.Create(path.Id, null, "Memory", null, LearningPathNodeType.Topic, 1, true, now);
+        var optional = LearningPathNode.Create(path.Id, null, "NUMA deep dive", null, LearningPathNodeType.Topic, 2, false, now);
+        optional.Update("NUMA deep dive", null, LearningPathNodeType.Topic, false, LearningPathNodeStatus.Completed, now);
+        await paths.InsertNodeAsync(done, [], [], TestContext.Current.CancellationToken);
+        await paths.InsertNodeAsync(open, [], [], TestContext.Current.CancellationToken);
+        await paths.InsertNodeAsync(optional, [], [], TestContext.Current.CancellationToken);
+
+        var result = await paths.SearchAsync(new LearningPathSearchCriteria("Performance", null, false, 1, 100), TestContext.Current.CancellationToken);
+
+        var item = Assert.Single(result.Items);
+        Assert.Equal(1, item.RequiredCompleted);
+        Assert.Equal(2, item.RequiredTotal);
+        Assert.Equal(50m, item.CoreCompletionPercent);
+    }
+
+    [Fact]
+    public async Task M4Migration_CreatesExpectedLearningPathTables()
+    {
+        await using var connection = await _connectionFactory.OpenAsync(TestContext.Current.CancellationToken);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'LearningPath%' ORDER BY name;";
+        var names = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        while (await reader.ReadAsync(TestContext.Current.CancellationToken))
+        {
+            names.Add(reader.GetString(0));
+        }
+
+        Assert.Contains("LearningPaths", names);
+        Assert.Contains("LearningPathNodes", names);
+        Assert.Contains("LearningPathNodeSkills", names);
+        Assert.Contains("LearningPathNodeResources", names);
+        Assert.Contains("LearningPathNodeRelations", names);
+    }
+
 }

@@ -62,3 +62,5 @@ publish/
 *.appx
 *.appxbundle
 *.msi
+# Generated milestone delivery archives
+SASD-Learning-Manager-Milestone-*.zip

@@ -221,6 +221,24 @@ public sealed class ResourceRepository : IResourceRepository
         return new PagedResult<InboxListItemDto>(items, criteria.PageNumber, criteria.PageSize, totalCount);
     }
 
+    public async Task<IReadOnlyList<ResourceLookupDto>> ListLookupAsync(bool includeArchived, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _connectionFactory.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = includeArchived
+            ? "SELECT r.Id, r.Title, r.ResourceType, r.Status, p.Name FROM Resources r LEFT JOIN Providers p ON p.Id = r.ProviderId ORDER BY r.Title COLLATE NOCASE;"
+            : "SELECT r.Id, r.Title, r.ResourceType, r.Status, p.Name FROM Resources r LEFT JOIN Providers p ON p.Id = r.ProviderId WHERE r.Status <> 'Archived' ORDER BY r.Title COLLATE NOCASE;";
+        var items = new List<ResourceLookupDto>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            items.Add(new ResourceLookupDto(Guid.Parse(reader.GetString(0)), reader.GetString(1),
+                Enum.Parse<ResourceType>(reader.GetString(2)), Enum.Parse<ResourceStatus>(reader.GetString(3)),
+                SqliteValue.NullableString(reader, 4)));
+        }
+        return items;
+    }
+
     public async Task InsertAsync(Resource resource, IReadOnlyCollection<string> tags, CancellationToken cancellationToken = default)
     {
         await using var connection = await _connectionFactory.OpenAsync(cancellationToken).ConfigureAwait(false);

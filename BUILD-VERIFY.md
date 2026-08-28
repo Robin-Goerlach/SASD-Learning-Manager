@@ -1,21 +1,37 @@
-# Build & Verify – Milestone 3
+# Build Verification – SASD Learning Manager M4 Hotfix 001
 
-## Bestätigte Baseline
+## Verifizierte Ausgangsbasis
 
-Milestone 2 Hotfix 001 wurde am 27.08.2026 auf Windows erfolgreich verifiziert:
+Milestone 3 wurde am 28.08.2026 auf Windows erfolgreich nachgewiesen:
 
 ```text
 Build succeeded
 0 Warning(s)
 0 Error(s)
-29 / 29 Tests grün
+48 / 48 Tests grün
 ```
 
-Milestone 3 baut direkt auf diesem bestätigten Stand auf.
 
-## Vollständiger M3-Nachweis
+## M4 Hotfix 001 – Ursache des ersten fehlgeschlagenen Builds
 
-```powershell
+Der erste M4-Auslieferungsstand enthielt in
+`tests/SASD.LearningManager.Application.Tests/TestDoubles.cs` ab Zeile 275
+einen Generator-/Serialisierungsfehler: ein kompletter C#-Block war mit wörtlichen
+`\n`-Sequenzen in **eine physische Quelltextzeile** geschrieben worden.
+
+Der Windows-Compiler meldete deshalb zahlreiche Syntaxfehler, die sämtlich von
+`TestDoubles.cs(275, ...)` ausgingen. Der Produktcode selbst (Domain, Application,
+Infrastructure und WinForms) sowie drei der vier Testprojekte wurden davor bereits
+erfolgreich kompiliert.
+
+Hotfix 001 ersetzt den beschädigten Block durch normalen C#-Quelltext und enthält
+einen zusätzlichen Quelltextscan gegen vergleichbare Generator-Artefakte.
+
+## Milestone 4 – auszuführender Nachweis
+
+Im Repository-Root:
+
+```cmd
 dotnet clean .\SASD.LearningManager.sln
 dotnet restore .\SASD.LearningManager.sln
 dotnet build .\SASD.LearningManager.sln -c Release --no-restore
@@ -25,46 +41,39 @@ dotnet test .\SASD.LearningManager.sln -c Release --no-build
 Erwartet:
 
 ```text
-Build succeeded
+Build succeeded.
 0 Warning(s)
 0 Error(s)
-48 Tests grün
+
+Domain.Tests          23 passed
+Application.Tests     26 passed
+Infrastructure.Tests  11 passed
+Architecture.Tests     4 passed
+Total                 64 passed
+Failed                 0
 ```
 
-## Anwendung
+## Zusätzlich geprüfte M4-Baseline
 
-```powershell
+Vor Auslieferung wurden in der Erstellungsumgebung geprüft:
+
+- Migration 0001 bytegleich zu M3
+- Migration 0002 bytegleich zu M3
+- Migration 0003 bytegleich zu M3
+- Migration 0004 mit SQLite ausgeführt
+- Foreign-Key-Check ohne Fehler
+- SQLite Integrity Check `ok`
+- alle ProjectReferences vorhanden
+- Projekt-/Props-XML valide
+- bekannte xUnit1051/xUnit2017-Antipatterns nicht gefunden
+- keine literalen `\n`-Generator-Artefakte außerhalb gültiger C#-Strings/Kommentare
+- keine C#-Quelltextzeile > 300 Zeichen nach Hotfix
+- alle 64 `[Fact]`-Tests im Quellbestand gezählt
+
+## Anwendung starten
+
+```cmd
 dotnet run --project .\src\SASD.LearningManager.WinForms\SASD.LearningManager.WinForms.csproj
 ```
 
-## M3 Smoke Test
-
-1. Skills → Kompetenzkatalog → Bereich und Topic anlegen.
-2. Skill mit Target Level 4 anlegen.
-3. Skill auf Current Level 2 bewerten.
-4. Gap `+2` prüfen.
-5. Assessment-Historie erneut öffnen.
-6. Goal anlegen und Skill zuordnen.
-7. Skill danach erneut prüfen: Current Level unverändert.
-8. Archivieren/Wiederherstellen von Goal/Skill prüfen.
-9. App neu starten und Persistenz prüfen.
-
-## Datenbankmigration
-
-Beim ersten Start des M3-Stands wird ausschließlich `0003_goals_skills.sql` zusätzlich angewandt.
-
-Die bereits bestätigten Migrationen `0001` und `0002` sind bytegleich zum M2-Hotfix-Stand.
-
-## Verifikation in der Erstellungsumgebung
-
-- alle drei SQL-Migrationen mit SQLite ausgeführt: PASS
-- `PRAGMA foreign_key_check`: PASS
-- `PRAGMA integrity_check`: PASS
-- M3-Taxonomie-/Skill-/Goal-Beziehungen als SQL-Smoke-Test: PASS
-- M1/M2 Migration-Checksums unverändert: PASS
-- alle `.csproj`/`.props`: XML geprüft
-- alle ProjectReferences: geprüft
-- C#-Delimiter-/Lexik-Check: PASS
-- bekannte xUnit2017-/Application.Run-Regressionsmuster: geprüft
-
-Ein echter .NET-Compiler ist in der Erstellungsumgebung weiterhin nicht installiert; deshalb ist der obige Windows-Build der finale Nachweis.
+Im UI sollte jetzt **Lernpfade** aktiv sein.

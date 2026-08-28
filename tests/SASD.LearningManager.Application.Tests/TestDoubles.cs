@@ -2,12 +2,14 @@ using SASD.LearningManager.Application.Abstractions;
 using SASD.LearningManager.Application.Common;
 using SASD.LearningManager.Application.Competencies;
 using SASD.LearningManager.Application.Goals;
+using SASD.LearningManager.Application.LearningPaths;
 using SASD.LearningManager.Application.Providers;
 using SASD.LearningManager.Application.Resources;
 using SASD.LearningManager.Application.Skills;
 using SASD.LearningManager.Domain.Providers;
 using SASD.LearningManager.Domain.Competencies;
 using SASD.LearningManager.Domain.Goals;
+using SASD.LearningManager.Domain.LearningPaths;
 using SASD.LearningManager.Domain.Resources;
 using SASD.LearningManager.Domain.Skills;
 
@@ -78,6 +80,11 @@ internal sealed class FakeResourceRepository : IResourceRepository
             .ToArray();
         return Task.FromResult(new PagedResult<InboxListItemDto>(items, criteria.PageNumber, criteria.PageSize, items.Length));
     }
+
+    public Task<IReadOnlyList<ResourceLookupDto>> ListLookupAsync(bool includeArchived, CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<ResourceLookupDto>>(Items.Values
+            .Where(x => includeArchived || x.Status != ResourceStatus.Archived)
+            .Select(x => new ResourceLookupDto(x.Id, x.Title, x.Type, x.Status, null)).ToArray());
 
     public Task InsertAsync(Resource resource, IReadOnlyCollection<string> tags, CancellationToken cancellationToken = default)
     {
@@ -246,6 +253,11 @@ internal sealed class FakeGoalRepository : IGoalRepository
     public Task<PagedResult<GoalListItemDto>> SearchAsync(GoalSearchCriteria criteria, CancellationToken cancellationToken = default)
         => Task.FromResult(new PagedResult<GoalListItemDto>([], criteria.PageNumber, criteria.PageSize, 0));
 
+    public Task<IReadOnlyList<GoalLookupDto>> ListLookupAsync(bool includeArchived, CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<GoalLookupDto>>(Items.Values
+            .Where(x => includeArchived || x.Status != GoalStatus.Archived)
+            .Select(x => new GoalLookupDto(x.Id, x.Title, x.Status)).ToArray());
+
     public Task InsertAsync(Goal goal, IReadOnlyCollection<Guid> skillIds, CancellationToken cancellationToken = default)
     {
         Items.Add(goal.Id, goal);
@@ -257,6 +269,118 @@ internal sealed class FakeGoalRepository : IGoalRepository
     {
         Items[goal.Id] = goal;
         SkillLinks[goal.Id] = skillIds.ToArray();
+        return Task.CompletedTask;
+    }
+}
+
+
+internal sealed class FakeLearningPathRepository : ILearningPathRepository
+{
+    public Dictionary<Guid, LearningPath> Items { get; } = [];
+    public Dictionary<Guid, IReadOnlyCollection<Guid>> GoalLinks { get; } = [];
+    public Dictionary<Guid, LearningPathNode> Nodes { get; } = [];
+    public Dictionary<Guid, IReadOnlyCollection<Guid>> NodeSkills { get; } = [];
+    public Dictionary<Guid, IReadOnlyCollection<Guid>> NodeResources { get; } = [];
+    public Dictionary<Guid, LearningPathNodeRelation> Relations { get; } = [];
+
+    public Task<LearningPath?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => Task.FromResult(Items.GetValueOrDefault(id));
+
+    public Task<LearningPathDetailDto?> GetDetailAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        if (!Items.TryGetValue(id, out var path)) return Task.FromResult<LearningPathDetailDto?>(null);
+        var nodes = Nodes.Values.Where(node => node.LearningPathId == id && node.Status != LearningPathNodeStatus.Archived).ToArray();
+        var progress = LearningPathProgress.Calculate(nodes);
+        return Task.FromResult<LearningPathDetailDto?>(new LearningPathDetailDto(path.Id, path.Title, path.Description, path.Status,
+            path.Priority, path.PlannedStartDate, path.TargetDate, path.NextActionText, path.NextActionDueDate, path.CreatedAtUtc,
+            path.UpdatedAtUtc, path.StartedAtUtc, path.CompletedAtUtc, path.ArchivedAtUtc,
+            GoalLinks.TryGetValue(id, out var goals) ? goals.ToArray() : [], progress.RequiredCompleted, progress.RequiredTotal,
+            progress.OptionalCompleted, progress.OptionalTotal, progress.CoreCompletionPercent));
+    }
+
+    public Task<PagedResult<LearningPathListItemDto>> SearchAsync(LearningPathSearchCriteria criteria, CancellationToken cancellationToken = default)
+        => Task.FromResult(new PagedResult<LearningPathListItemDto>([], criteria.PageNumber, criteria.PageSize, 0));
+
+    public Task InsertAsync(LearningPath path, IReadOnlyCollection<Guid> goalIds, CancellationToken cancellationToken = default)
+    {
+        Items.Add(path.Id, path);
+        GoalLinks[path.Id] = goalIds.ToArray();
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateAsync(LearningPath path, IReadOnlyCollection<Guid> goalIds, CancellationToken cancellationToken = default)
+    {
+        Items[path.Id] = path;
+        GoalLinks[path.Id] = goalIds.ToArray();
+        return Task.CompletedTask;
+    }
+
+    public Task<IReadOnlyList<LearningPathNode>> ListNodesAsync(Guid learningPathId, bool includeArchived, CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<LearningPathNode>>(Nodes.Values
+            .Where(node => node.LearningPathId == learningPathId && (includeArchived || node.Status != LearningPathNodeStatus.Archived))
+            .OrderBy(node => node.ParentNodeId).ThenBy(node => node.SortOrder).ToArray());
+
+    public Task<LearningPathNode?> GetNodeByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => Task.FromResult(Nodes.GetValueOrDefault(id));
+
+    public Task<LearningPathNodeDetailDto?> GetNodeDetailAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        if (!Nodes.TryGetValue(id, out var node)) return Task.FromResult<LearningPathNodeDetailDto?>(null);
+        return Task.FromResult<LearningPathNodeDetailDto?>(new LearningPathNodeDetailDto(node.Id, node.LearningPathId, node.ParentNodeId,
+            node.Title, node.Description, node.Type, node.SortOrder, node.IsRequired, node.Status, node.CreatedAtUtc, node.UpdatedAtUtc,
+            node.ArchivedAtUtc, NodeSkills.TryGetValue(id, out var skills) ? skills.ToArray() : [],
+            NodeResources.TryGetValue(id, out var resources) ? resources.ToArray() : []));
+    }
+
+    public Task InsertNodeAsync(LearningPathNode node, IReadOnlyCollection<Guid> skillIds, IReadOnlyCollection<Guid> resourceIds, CancellationToken cancellationToken = default)
+    {
+        Nodes.Add(node.Id, node);
+        NodeSkills[node.Id] = skillIds.ToArray();
+        NodeResources[node.Id] = resourceIds.ToArray();
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateNodeAsync(LearningPathNode node, IReadOnlyCollection<Guid> skillIds, IReadOnlyCollection<Guid> resourceIds, CancellationToken cancellationToken = default)
+    {
+        Nodes[node.Id] = node;
+        NodeSkills[node.Id] = skillIds.ToArray();
+        NodeResources[node.Id] = resourceIds.ToArray();
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateNodeOrdersAsync(IReadOnlyCollection<LearningPathNodeOrderUpdate> updates, CancellationToken cancellationToken = default)
+    {
+        foreach (var update in updates)
+        {
+            Nodes[update.NodeId].MoveTo(update.ParentNodeId, update.SortOrder, update.UpdatedAtUtc);
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task ArchiveNodesAsync(IReadOnlyCollection<Guid> nodeIds, DateTimeOffset nowUtc, CancellationToken cancellationToken = default)
+    {
+        foreach (var id in nodeIds) Nodes[id].Archive(nowUtc);
+        return Task.CompletedTask;
+    }
+
+    public Task<IReadOnlyList<LearningPathNodeRelationDto>> ListRelationsAsync(Guid learningPathId, CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<LearningPathNodeRelationDto>>(Relations.Values
+            .Where(relation => Nodes[relation.SourceNodeId].LearningPathId == learningPathId)
+            .Select(relation => new LearningPathNodeRelationDto(relation.Id, relation.SourceNodeId, Nodes[relation.SourceNodeId].Title,
+                relation.TargetNodeId, Nodes[relation.TargetNodeId].Title, relation.Type, relation.Note, relation.CreatedAtUtc)).ToArray());
+
+    public Task<bool> RelationExistsAsync(Guid sourceNodeId, Guid targetNodeId, LearningPathNodeRelationType type, CancellationToken cancellationToken = default)
+        => Task.FromResult(Relations.Values.Any(relation => relation.SourceNodeId == sourceNodeId && relation.TargetNodeId == targetNodeId && relation.Type == type));
+
+    public Task InsertRelationAsync(LearningPathNodeRelation relation, CancellationToken cancellationToken = default)
+    {
+        Relations.Add(relation.Id, relation);
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteRelationAsync(Guid relationId, CancellationToken cancellationToken = default)
+    {
+        Relations.Remove(relationId);
         return Task.CompletedTask;
     }
 }

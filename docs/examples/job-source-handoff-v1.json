@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "sourceSystem": "Example Portal",
+  "searchProfileId": null,
+  "capturedAtUtc": "2026-08-27T08:00:00Z",
+  "items": [
+    {
+      "externalJobId": "example-4711",
+      "title": "Linux Platform Engineer",
+      "organizationName": "Example Systems GmbH",
+      "location": "Example City",
+      "remoteText": "Hybrid / 3 Tage remote",
+      "salaryText": "65–75 k€",
+      "url": "https://jobs.example.invalid/example-4711?utm_source=job-alert",
+      "descriptionText": "Synthetische Stellenbeschreibung für Demonstrations- und Testzwecke.",
+      "publishedAtUtc": "2026-08-26T09:00:00Z"
+    }
+  ]
+}

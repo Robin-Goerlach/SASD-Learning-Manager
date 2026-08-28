@@ -55,6 +55,9 @@ public sealed record InboxListItemDto(
     string? Note,
     DateTimeOffset CapturedAtUtc);
 
+/// <summary>Compact resource option used by learning-path node editors.</summary>
+public sealed record ResourceLookupDto(Guid Id, string Title, ResourceType Type, ResourceStatus Status, string? ProviderName);
+
 /// <summary>Full read model used by the resource edit form.</summary>
 public sealed record ResourceDetailDto(
     Guid Id,

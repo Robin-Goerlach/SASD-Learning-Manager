@@ -1,0 +1,34 @@
+SASD Learning Manager - Milestone 4 Hotfix 001 Verification
+Generated: 2026-08-28
+
+User-reported M4 failure analysis:
+- 822 compiler errors parsed from the failing M4 build section
+- 822 / 822 source locations: TestDoubles.cs line 275
+- Application.Tests was the only project that did not produce an assembly
+- Domain, Application, Infrastructure, WinForms, Domain.Tests, Infrastructure.Tests and Architecture.Tests compiled
+
+Hotfix source checks:
+- TestDoubles.cs: repaired literal \n generator sequences
+- TestDoubles.cs physical lines after repair: 386
+- C# lexical/delimiter scan: PASS (96 files)
+- C# lines > 300 chars: 0
+- xUnit collection assertion risk scan: PASS
+- Project/props XML parse: PASS
+- ProjectReference check: PASS (15/15)
+- Expected [Fact] inventory: 64 (Domain 23, Application 26, Infrastructure 11, Architecture 4)
+
+Migration checks:
+- 0001_baseline.sql: SHA-256 944bbaafcc1d932e11efa31cb1b8598cecdce91130ee94ae8fb5b23e67491840
+- 0002_resource_library.sql: SHA-256 735528219ce7ce0522f3570de791060582a66315bd7b5a67f7e3063e4159e86b
+- 0003_goals_skills.sql: SHA-256 5f99fd6a92065c3aeeb3a7bedb91f703a5035a0131629a33cbf299d16fc3714c
+- 0004_learning_paths.sql: SHA-256 feff6887b73602c2471d2a5135d57350cb9a9bdd48d652092e6cb968ada3510f
+- 0001..0003 byte-identical to verified M3 package: PASS
+- 0001..0004 SQLite execution: PASS
+- PRAGMA integrity_check: ok
+- PRAGMA foreign_key_check: no rows
+- LearningPath node/relation smoke insert: PASS
+- self-relation CHECK constraint: PASS
+
+Important limitation:
+- A real .NET compile/test run cannot be executed in the artifact environment because no .NET SDK is available there.
+- The Windows verification commands remain the final compiler/test gate.
