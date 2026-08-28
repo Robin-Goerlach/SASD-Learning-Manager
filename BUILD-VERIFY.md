@@ -1,12 +1,19 @@
-# Build & Verify – Milestone 2
+# Build & Verify – Milestone 3
 
-## Voraussetzungen
+## Bestätigte Baseline
 
-- Windows 11 oder kompatible Windows-Entwicklungsumgebung
-- .NET 8 SDK
-- optional Visual Studio 2022 mit .NET Desktop Development Workload
+Milestone 2 Hotfix 001 wurde am 27.08.2026 auf Windows erfolgreich verifiziert:
 
-## Vollständiger Nachweis
+```text
+Build succeeded
+0 Warning(s)
+0 Error(s)
+29 / 29 Tests grün
+```
+
+Milestone 3 baut direkt auf diesem bestätigten Stand auf.
+
+## Vollständiger M3-Nachweis
 
 ```powershell
 dotnet clean .\SASD.LearningManager.sln
@@ -21,7 +28,7 @@ Erwartet:
 Build succeeded
 0 Warning(s)
 0 Error(s)
-alle Tests grün
+48 Tests grün
 ```
 
 ## Anwendung
@@ -30,27 +37,34 @@ alle Tests grün
 dotnet run --project .\src\SASD.LearningManager.WinForms\SASD.LearningManager.WinForms.csproj
 ```
 
-M2-Smoke-Test:
+## M3 Smoke Test
 
-1. `Ctrl+Shift+N` drücken.
-2. `https://example.com/learning` speichern.
-3. Inbox öffnet sich.
-4. Eintrag doppelklicken bzw. `Klassifizieren` wählen.
-5. Provider/Typ/Status ergänzen.
-6. Speichern.
-7. Eintrag verschwindet aus Inbox und bleibt in der Resource Library erhalten.
-8. dieselbe URL erneut capturen und Dublettendialog prüfen.
+1. Skills → Kompetenzkatalog → Bereich und Topic anlegen.
+2. Skill mit Target Level 4 anlegen.
+3. Skill auf Current Level 2 bewerten.
+4. Gap `+2` prüfen.
+5. Assessment-Historie erneut öffnen.
+6. Goal anlegen und Skill zuordnen.
+7. Skill danach erneut prüfen: Current Level unverändert.
+8. Archivieren/Wiederherstellen von Goal/Skill prüfen.
+9. App neu starten und Persistenz prüfen.
 
-## Behobene Buildfehler aus den Windows-Builds
+## Datenbankmigration
 
-Dieser Stand enthält die Korrekturen der bisher real beobachteten Compiler-/Analyzerfehler:
+Beim ersten Start des M3-Stands wird ausschließlich `0003_goals_skills.sql` zusätzlich angewandt.
 
-- `Program.cs`: voll qualifiziertes `System.Windows.Forms.Application.Run(...)`
-- xUnit v3 / xUnit1051: `TestContext.Current.CancellationToken` an cancellable Methoden
-- xUnit2017: `Assert.True(resources.Tags[id].Contains(...))` ersetzt durch `Assert.Contains("docker", resources.Tags[id], StringComparer.OrdinalIgnoreCase)`
+Die bereits bestätigten Migrationen `0001` und `0002` sind bytegleich zum M2-Hotfix-Stand.
 
-Nach dem letzten gemeldeten Windows-Build war dies der einzige verbleibende Fehler. Trotzdem gilt erst der erneute vollständige `build`- und `test`-Lauf als endgültiger Nachweis.
+## Verifikation in der Erstellungsumgebung
 
-## Hinweis zur Erstellungsumgebung
+- alle drei SQL-Migrationen mit SQLite ausgeführt: PASS
+- `PRAGMA foreign_key_check`: PASS
+- `PRAGMA integrity_check`: PASS
+- M3-Taxonomie-/Skill-/Goal-Beziehungen als SQL-Smoke-Test: PASS
+- M1/M2 Migration-Checksums unverändert: PASS
+- alle `.csproj`/`.props`: XML geprüft
+- alle ProjectReferences: geprüft
+- C#-Delimiter-/Lexik-Check: PASS
+- bekannte xUnit2017-/Application.Run-Regressionsmuster: geprüft
 
-Hier steht weiterhin kein .NET SDK zur Verfügung. Die SQL-Abfragen und Migrationen wurden mit einer echten SQLite-Engine getestet und der Source statisch geprüft. Der definitive Compile-/Testnachweis erfolgt mit den oben genannten Befehlen auf dem Windows-.NET-System oder über GitHub Actions.
+Ein echter .NET-Compiler ist in der Erstellungsumgebung weiterhin nicht installiert; deshalb ist der obige Windows-Build der finale Nachweis.

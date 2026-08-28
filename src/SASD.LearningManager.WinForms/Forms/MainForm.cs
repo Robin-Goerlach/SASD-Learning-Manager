@@ -6,11 +6,13 @@ using SASD.LearningManager.WinForms.Views;
 namespace SASD.LearningManager.WinForms.Forms;
 
 /// <summary>
-/// Main application shell. Milestone 2 activates the Resource Library, dedicated Inbox and global
-/// Quick Capture while keeping later roadmap areas visible but disabled.
+/// Main application shell. Milestone 3 adds active Goals and Skills workspaces while retaining the
+/// Resource Library, Inbox and global Quick Capture from the previous milestones.
 /// </summary>
 public sealed class MainForm : Form
 {
+    private readonly GoalsView _goalsView;
+    private readonly SkillsView _skillsView;
     private readonly ResourcesView _resourcesView;
     private readonly InboxView _inboxView;
     private readonly ResourceService _resourceService;
@@ -22,16 +24,22 @@ public sealed class MainForm : Form
         Font = new Font("Segoe UI", 16F, FontStyle.Bold),
         Text = "Ressourcen"
     };
+    private Button? _goalsButton;
+    private Button? _skillsButton;
     private Button? _resourcesButton;
     private Button? _inboxButton;
 
     public MainForm(
+        GoalsView goalsView,
+        SkillsView skillsView,
         ResourcesView resourcesView,
         InboxView inboxView,
         ResourceService resourceService,
         ILogger<MainForm> logger,
         ApplicationPaths paths)
     {
+        _goalsView = goalsView;
+        _skillsView = skillsView;
         _resourcesView = resourcesView;
         _inboxView = inboxView;
         _resourceService = resourceService;
@@ -58,7 +66,7 @@ public sealed class MainForm : Form
             }
         };
 
-        ShowResources();
+        ShowGoals();
     }
 
     private Control BuildSidebar()
@@ -93,9 +101,16 @@ public sealed class MainForm : Form
         panel.Controls.SetChildIndex(nav, 0);
 
         nav.Controls.Add(CreateNavButton("Heute", enabled: false));
-        nav.Controls.Add(CreateNavButton("Ziele", enabled: false));
+
+        _goalsButton = CreateNavButton("Ziele", enabled: true);
+        _goalsButton.Click += (_, _) => ShowGoals();
+        nav.Controls.Add(_goalsButton);
+
         nav.Controls.Add(CreateNavButton("Lernpfade", enabled: false));
-        nav.Controls.Add(CreateNavButton("Skills", enabled: false));
+
+        _skillsButton = CreateNavButton("Skills", enabled: true);
+        _skillsButton.Click += (_, _) => ShowSkills();
+        nav.Controls.Add(_skillsButton);
 
         _resourcesButton = CreateNavButton("Ressourcen", enabled: true);
         _resourcesButton.Click += (_, _) => ShowResources();
@@ -161,6 +176,26 @@ public sealed class MainForm : Form
         };
     }
 
+    private void ShowGoals()
+    {
+        SetSelectedNavigation(_goalsButton);
+        _titleLabel.Text = "Lernziele";
+        _contentPanel.Controls.Clear();
+        _goalsView.Dock = DockStyle.Fill;
+        _contentPanel.Controls.Add(_goalsView);
+        _ = _goalsView.RefreshAsync();
+    }
+
+    private void ShowSkills()
+    {
+        SetSelectedNavigation(_skillsButton);
+        _titleLabel.Text = "Skills & Kompetenzlücken";
+        _contentPanel.Controls.Clear();
+        _skillsView.Dock = DockStyle.Fill;
+        _contentPanel.Controls.Add(_skillsView);
+        _ = _skillsView.RefreshAsync();
+    }
+
     private void ShowResources()
     {
         SetSelectedNavigation(_resourcesButton);
@@ -183,7 +218,7 @@ public sealed class MainForm : Form
 
     private void SetSelectedNavigation(Button? selected)
     {
-        foreach (var button in new[] { _resourcesButton, _inboxButton })
+        foreach (var button in new[] { _goalsButton, _skillsButton, _resourcesButton, _inboxButton })
         {
             if (button is null)
             {

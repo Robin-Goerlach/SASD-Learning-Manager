@@ -5,7 +5,7 @@
 | Feld | Wert |
 |---|---|
 | Owner | SASD / Product Owner |
-| Status | Active – Pre-Implementation |
+| Status | Active – Implementation / Milestone 3 |
 | Qualitätsstufe | Recommended; Production-Ziel für V1 |
 | Profile | Core, DotNet, Desktop; Security/Operations proportional |
 | Startdatum | 2026-08-27 |

@@ -41,6 +41,8 @@ internal static class Program
 
             builder.Services.AddSingleton(paths);
             builder.Services.AddLearningManagerInfrastructure(paths.DatabasePath);
+            builder.Services.AddTransient<GoalsView>();
+            builder.Services.AddTransient<SkillsView>();
             builder.Services.AddTransient<ResourcesView>();
             builder.Services.AddTransient<InboxView>();
             builder.Services.AddTransient<MainForm>();

@@ -12,25 +12,25 @@
 - manueller Smoke Test
 - reproduzierbarer Git-Stand
 
-## M0 – Technical Baseline
+## M0 – Technical Baseline — ✅ verified
 
 Deliverables: Solution, vier Assemblies, vier Testprojekte, Generic Host, DI, Logging, SQLite Connection, Migration Runner, MainForm, CI, Architecture Tests.
 
 Exit: `restore/build/test` erfolgreich; DB erstellt; Schema-Version korrekt.
 
-## M1 – Provider & Resource Library
+## M1 – Provider & Resource Library — ✅ verified
 
 Deliverables: Provider/Resource CRUD, Typ/Status/Priority, URL/LocalPath, Tags, Archive/Restore, sichere URL-Öffnung, Pagination.
 
 Abnahme: O’Reilly Resource anlegen, finden, ändern, archivieren und wiederherstellen.
 
-## M2 – Quick Capture & Inbox
+## M2 – Quick Capture & Inbox — ✅ verified
 
 Deliverables: Capture Shortcut, URL Normalizer, Duplicate Check, Inbox, Klassifikation.
 
 Abnahme: URL ohne Provider/Skill speichern und später einordnen.
 
-## M3 – Goals & Skills
+## M3 – Goals & Skills — 🟡 implemented, build verification pending
 
 Deliverables: Goals, Areas, Topics, Skills, Assessments, Target, Gap.
 

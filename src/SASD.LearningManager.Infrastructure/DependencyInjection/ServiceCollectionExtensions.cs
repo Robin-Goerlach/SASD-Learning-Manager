@@ -1,7 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using SASD.LearningManager.Application.Abstractions;
+using SASD.LearningManager.Application.Competencies;
+using SASD.LearningManager.Application.Goals;
 using SASD.LearningManager.Application.Providers;
 using SASD.LearningManager.Application.Resources;
+using SASD.LearningManager.Application.Skills;
 using SASD.LearningManager.Infrastructure.Files;
 using SASD.LearningManager.Infrastructure.Persistence;
 using SASD.LearningManager.Infrastructure.Persistence.Repositories;
@@ -21,8 +24,14 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IExternalLinkLauncher, ExternalLinkLauncher>();
 
         services.AddTransient<IProviderRepository, ProviderRepository>();
+        services.AddTransient<ICompetencyCatalogRepository, CompetencyCatalogRepository>();
+        services.AddTransient<ISkillRepository, SkillRepository>();
+        services.AddTransient<IGoalRepository, GoalRepository>();
         services.AddTransient<IResourceRepository, ResourceRepository>();
         services.AddTransient<ProviderService>();
+        services.AddTransient<CompetencyCatalogService>();
+        services.AddTransient<SkillService>();
+        services.AddTransient<GoalService>();
         services.AddTransient<ResourceService>();
         return services;
     }

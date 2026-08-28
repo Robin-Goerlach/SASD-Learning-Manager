@@ -4,6 +4,14 @@
 
 ### Added
 
+- Milestone 3: Goals mit Typ, Status, Priorität, Zieldatum und Next Action
+- Competency Areas und Topics inklusive many-to-many-Zuordnung
+- Skills mit Current-/Target-Level und Skill Gap
+- append-only Skill Assessment History
+- Goal↔Skill, Skill↔Area und Skill↔Topic Beziehungen
+- Goals- und Skills-Workspaces sowie Kompetenzkatalog-Dialog
+- Migration `0003_goals_skills.sql`
+
 - komplette Research-/Requirements-/Architecture-Baseline
 - .NET-8-Solution mit Domain/Application/Infrastructure/WinForms
 - SQLite Connection Factory und versionierter Migration Runner
@@ -24,7 +32,7 @@
 
 ### Changed
 
-- Projektstatus auf Milestone 0 + Milestone 1 + Milestone 2 aktualisiert.
+- Projektstatus auf Milestone 0 bis Milestone 3 aktualisiert.
 - M1 Buildfehler `Application.Run` und xUnit1051 korrigiert.
 - M2 Hotfix: xUnit2017 in `ResourceServiceTests` durch die spezialisierte `Assert.Contains`-Assertion behoben.
 - URL-Dubletten sind bewusst eine fachliche Warnung statt eines harten `UNIQUE`-Constraints.

@@ -1,6 +1,12 @@
 using Microsoft.Extensions.Logging.Abstractions;
+using SASD.LearningManager.Application.Competencies;
+using SASD.LearningManager.Application.Goals;
 using SASD.LearningManager.Application.Resources;
+using SASD.LearningManager.Application.Skills;
+using SASD.LearningManager.Domain.Competencies;
+using SASD.LearningManager.Domain.Goals;
 using SASD.LearningManager.Domain.Resources;
+using SASD.LearningManager.Domain.Skills;
 using SASD.LearningManager.Infrastructure.Persistence;
 using SASD.LearningManager.Infrastructure.Persistence.Repositories;
 
@@ -156,5 +162,76 @@ public sealed class SqliteIntegrationTests : IAsyncLifetime
 
         Assert.NotNull(duplicate);
         Assert.Equal(first.Id, duplicate.Id);
+    }
+
+    [Fact]
+    public async Task M3Repositories_RoundTripTaxonomySkillAssessmentAndGoalLinks()
+    {
+        var catalog = new CompetencyCatalogRepository(_connectionFactory);
+        var skills = new SkillRepository(_connectionFactory);
+        var goals = new GoalRepository(_connectionFactory);
+        var now = new DateTimeOffset(2026, 8, 27, 20, 0, 0, TimeSpan.Zero);
+
+        var area = CompetencyArea.Create("Linux", "Operating systems", now);
+        await catalog.InsertAreaAsync(area, TestContext.Current.CancellationToken);
+        var topic = Topic.Create("systemd", "Service management", now);
+        await catalog.InsertTopicAsync(topic, [area.Id], TestContext.Current.CancellationToken);
+
+        var skill = Skill.Create("Services diagnostizieren", "systemctl und journalctl", 4, now);
+        await skills.InsertAsync(skill, [area.Id], [topic.Id], TestContext.Current.CancellationToken);
+        var assessment = SkillAssessment.Create(skill.Id, 2, SkillAssessmentType.PracticalReview, "Lab", now, now);
+        skill.ApplyAssessment(2, now);
+        await skills.AddAssessmentAsync(skill, assessment, TestContext.Current.CancellationToken);
+
+        var goal = Goal.Create("Linux vertiefen", null, GoalType.Learning, "Jobprofil", GoalPriority.High,
+            GoalStatus.Active, new DateOnly(2026, 12, 31), "systemd Lab", null, now);
+        await goals.InsertAsync(goal, [skill.Id], TestContext.Current.CancellationToken);
+
+        var skillDetail = await skills.GetDetailAsync(skill.Id, TestContext.Current.CancellationToken);
+        var history = await skills.ListAssessmentsAsync(skill.Id, TestContext.Current.CancellationToken);
+        var goalDetail = await goals.GetDetailAsync(goal.Id, TestContext.Current.CancellationToken);
+
+        Assert.NotNull(skillDetail);
+        Assert.Equal(2, skillDetail.CurrentLevel);
+        Assert.Contains(area.Id, skillDetail.CompetencyAreaIds);
+        Assert.Contains(topic.Id, skillDetail.TopicIds);
+        Assert.Single(history);
+        Assert.NotNull(goalDetail);
+        Assert.Contains(skill.Id, goalDetail.SkillIds);
+    }
+
+    [Fact]
+    public async Task M3SkillSearch_ComputesGapAndTaxonomyLabels()
+    {
+        var catalog = new CompetencyCatalogRepository(_connectionFactory);
+        var skills = new SkillRepository(_connectionFactory);
+        var now = new DateTimeOffset(2026, 8, 27, 20, 0, 0, TimeSpan.Zero);
+        var area = CompetencyArea.Create("Cloud", null, now);
+        await catalog.InsertAreaAsync(area, TestContext.Current.CancellationToken);
+        var topic = Topic.Create("Docker Networking", null, now);
+        await catalog.InsertTopicAsync(topic, [area.Id], TestContext.Current.CancellationToken);
+        var skill = Skill.Create("Bridge-Netzwerke konfigurieren", null, 4, now);
+        await skills.InsertAsync(skill, [area.Id], [topic.Id], TestContext.Current.CancellationToken);
+        var assessment = SkillAssessment.Create(skill.Id, 2, SkillAssessmentType.SelfAssessment, null, now, now);
+        skill.ApplyAssessment(2, now);
+        await skills.AddAssessmentAsync(skill, assessment, TestContext.Current.CancellationToken);
+
+        var result = await skills.SearchAsync(new SkillSearchCriteria("Bridge", null, false, 1, 100), TestContext.Current.CancellationToken);
+
+        var item = Assert.Single(result.Items);
+        Assert.Equal(2, item.Gap);
+        Assert.Contains("Cloud", item.CompetencyAreas);
+        Assert.Contains("Docker Networking", item.Topics);
+    }
+
+    [Fact]
+    public async Task M3Database_HasNoForeignKeyViolations()
+    {
+        await using var connection = await _connectionFactory.OpenAsync(TestContext.Current.CancellationToken);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA foreign_key_check;";
+        await using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+
+        Assert.False(await reader.ReadAsync(TestContext.Current.CancellationToken));
     }
 }

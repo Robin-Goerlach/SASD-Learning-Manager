@@ -26,7 +26,7 @@ local-first
 
 ## Sichtbarkeit
 
-Für die Pre-Implementation-/Pilotphase ist `Private` sinnvoll. Vor einem öffentlichen Release sollen Lizenz, Security-Kontakt und Contribution-Modell bewusst entschieden werden.
+Für die aktuelle Implementierungs-/Pilotphase ist `Private` sinnvoll. Vor einem öffentlichen Release sollen Lizenz, Security-Kontakt und Contribution-Modell bewusst entschieden werden.
 
 ## Lizenz
 

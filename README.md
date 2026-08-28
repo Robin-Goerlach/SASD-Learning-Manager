@@ -2,7 +2,7 @@
 
 > Persönlicher, anbieterunabhängiger Learning-Portfolio- und Competency-Manager für strukturierte Weiterbildung.
 
-**Status:** Milestone 0 + Milestone 1 + Milestone 2 – implementierter Code-Stand  
+**Status:** Milestone 0 bis Milestone 3 – implementierter Code-Stand  
 **Stand:** 2026-08-27  
 **Zielplattform:** Windows 11  
 **Technologie:** C# / .NET 8 / Windows Forms / SQLite  
@@ -95,7 +95,7 @@ Siehe [`DOCUMENTATION-INDEX.md`](DOCUMENTATION-INDEX.md).
 
 ## Aktueller Implementierungsstand
 
-Milestone 0, Milestone 1 und Milestone 2 sind als Code-Stand enthalten. Implementiert sind derzeit:
+Milestone 0 bis Milestone 3 sind als Code-Stand enthalten. Implementiert sind derzeit:
 
 - Providerverwaltung
 - Ressourcenbibliothek
@@ -108,8 +108,12 @@ Milestone 0, Milestone 1 und Milestone 2 sind als Code-Stand enthalten. Implemen
 - Archivieren und Wiederherstellen
 - SQLite-Migrationen und ActivityLog
 - lokale Logs und Single-Instance-Schutz
+- Goals mit Skill-Zuordnung
+- Competency Areas und Topics
+- Skills mit Current-/Target-Level und Skill Gap
+- append-only Skill Assessments mit Historie
 
-Die übrigen Navigationspunkte bleiben absichtlich sichtbar, aber deaktiviert; sie werden in den folgenden Milestones implementiert.
+Ziele, Skills, Ressourcen und Inbox sind aktiv. Lernpfade, Wissen, Evidence und weitere Bereiche bleiben bis zu ihren Milestones sichtbar, aber deaktiviert.
 
 Siehe [`docs/development/MILESTONE-1-IMPLEMENTATION.md`](docs/development/MILESTONE-1-IMPLEMENTATION.md).
 
@@ -124,6 +128,20 @@ Aktuell zusätzlich nutzbar:
 - Inbox-Suche und Paging
 - Klassifikation in den vollständigen Resource Editor
 - reversibles Verwerfen/Archivieren
+
+## Milestone 3 – Goals & Skills
+
+Neu in diesem Stand:
+
+- Lernziele mit Typ, Status, Priorität, Zieldatum und Next Action
+- Competency Areas und Topics
+- Skills mit qualitativer 1..5-Skala
+- getrenntes Current-/Target-Level
+- berechneter Skill Gap
+- explizite Skillbewertung mit Historie
+- Goal↔Skill ohne automatische Mastery-Änderung
+
+Details: [`docs/development/MILESTONE-3-IMPLEMENTATION.md`](docs/development/MILESTONE-3-IMPLEMENTATION.md).
 
 ## Build und Tests
 
