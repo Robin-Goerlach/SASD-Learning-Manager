@@ -142,7 +142,7 @@ public sealed class ResourceCsvTransferServiceTests
             };
 
             var normalized = builder.Uri.AbsoluteUri;
-            return normalized.EndsWith('/', StringComparison.Ordinal)
+            return normalized.EndsWith("/", StringComparison.Ordinal)
                 ? normalized[..^1]
                 : normalized;
         }
