@@ -55,6 +55,7 @@
 
 ### Fixed
 
+- `AGENTS.md` enthielt versehentlich die Entwicklungsanweisungen des SASD Bewerbungsmanagers einschließlich falscher Solution-/EF-Core-Annahmen. Die Datei beschreibt jetzt ausschließlich den SASD Learning Manager, seine Architektur, M5-/CSV-Baseline und den Umgang mit der bekannten Repository-Verunreinigung.
 - M5 Knowledge/Evidence Services verwendeten nach dem Lesbarkeits-Refactoring zunächst den falschen Named-Argument-Namen `isNew`; GitHub Actions deckte dies auf und die Aufrufe wurden an den Repository-Port `insert` angepasst.
 - Chat-basierte CSV-Testdaten auf exakt 16 Spalten des produktiven Importformats korrigiert.
 - Milestone 4 Hotfix 001: `TestDoubles.cs` enthielt ab der Learning-Path-Testdouble-Erweiterung versehentlich literale `\n`-Escape-Sequenzen statt echter Zeilenumbrüche. Dadurch entstanden alle M4-Compilerfehler an derselben physischen Zeile 275. Der Block wurde in regulären C#-Quelltext zurückgeführt.
