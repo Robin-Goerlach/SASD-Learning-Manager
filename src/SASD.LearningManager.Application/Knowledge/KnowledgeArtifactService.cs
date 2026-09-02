@@ -43,7 +43,7 @@ public sealed class KnowledgeArtifactService
             model.Type,
             _clock.UtcNow);
 
-        await _repository.SaveAsync(artifact, Normalize(model), isNew: true, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(artifact, Normalize(model), insert: true, cancellationToken).ConfigureAwait(false);
         return artifact.Id;
     }
 
@@ -55,7 +55,7 @@ public sealed class KnowledgeArtifactService
     {
         var artifact = await GetRequiredAsync(id, cancellationToken).ConfigureAwait(false);
         artifact.Update(model.Title, model.Markdown, model.Type, _clock.UtcNow);
-        await _repository.SaveAsync(artifact, Normalize(model), isNew: false, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(artifact, Normalize(model), insert: false, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>Archives an artifact without discarding its historical relationships.</summary>
@@ -64,7 +64,7 @@ public sealed class KnowledgeArtifactService
         var artifact = await GetRequiredAsync(id, cancellationToken).ConfigureAwait(false);
         var detail = await GetRequiredDetailAsync(id, cancellationToken).ConfigureAwait(false);
         artifact.Archive(_clock.UtcNow);
-        await _repository.SaveAsync(artifact, From(detail), isNew: false, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(artifact, From(detail), insert: false, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>Restores an archived artifact and retains its previous relationships.</summary>
@@ -73,7 +73,7 @@ public sealed class KnowledgeArtifactService
         var artifact = await GetRequiredAsync(id, cancellationToken).ConfigureAwait(false);
         var detail = await GetRequiredDetailAsync(id, cancellationToken).ConfigureAwait(false);
         artifact.Restore(_clock.UtcNow);
-        await _repository.SaveAsync(artifact, From(detail), isNew: false, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(artifact, From(detail), insert: false, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<Domain.Knowledge.KnowledgeArtifact> GetRequiredAsync(Guid id, CancellationToken cancellationToken)
