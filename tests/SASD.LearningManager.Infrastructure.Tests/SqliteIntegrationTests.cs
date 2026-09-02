@@ -40,6 +40,16 @@ public sealed class SqliteIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Migration_0005_creates_knowledge_and_evidence_schema()
+    {
+        await using var connection = await _connectionFactory.OpenAsync(TestContext.Current.CancellationToken);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name IN ('KnowledgeArtifacts','Evidence','EvidenceSkills','KnowledgeArtifactResources');";
+
+        Assert.Equal(4L, (long)(await command.ExecuteScalarAsync(TestContext.Current.CancellationToken))!);
+    }
+
+    [Fact]
     public async Task Migrations_CreateSeedProviders()
     {
         var repository = new ProviderRepository(_connectionFactory);
