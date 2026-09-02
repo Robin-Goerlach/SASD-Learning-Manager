@@ -54,7 +54,7 @@ public sealed class EvidenceService
             model.Evaluation,
             _clock.UtcNow);
 
-        await _repository.SaveAsync(evidence, Normalize(model), isNew: true, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(evidence, Normalize(model), insert: true, cancellationToken).ConfigureAwait(false);
         return evidence.Id;
     }
 
@@ -72,7 +72,7 @@ public sealed class EvidenceService
             model.Evaluation,
             _clock.UtcNow);
 
-        await _repository.SaveAsync(evidence, Normalize(model), isNew: false, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(evidence, Normalize(model), insert: false, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>Archives Evidence while retaining its historical assignments.</summary>
@@ -81,7 +81,7 @@ public sealed class EvidenceService
         var evidence = await GetRequiredAsync(id, cancellationToken).ConfigureAwait(false);
         var detail = await GetRequiredDetailAsync(id, cancellationToken).ConfigureAwait(false);
         evidence.Archive(_clock.UtcNow);
-        await _repository.SaveAsync(evidence, From(detail), isNew: false, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(evidence, From(detail), insert: false, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>Restores archived Evidence and preserves its previous assignments.</summary>
@@ -90,7 +90,7 @@ public sealed class EvidenceService
         var evidence = await GetRequiredAsync(id, cancellationToken).ConfigureAwait(false);
         var detail = await GetRequiredDetailAsync(id, cancellationToken).ConfigureAwait(false);
         evidence.Restore(_clock.UtcNow);
-        await _repository.SaveAsync(evidence, From(detail), isNew: false, cancellationToken).ConfigureAwait(false);
+        await _repository.SaveAsync(evidence, From(detail), insert: false, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<Domain.Evidence.EvidenceItem> GetRequiredAsync(Guid id, CancellationToken cancellationToken)
