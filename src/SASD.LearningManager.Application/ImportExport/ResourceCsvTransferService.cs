@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using SASD.LearningManager.Application.Providers;
 using SASD.LearningManager.Application.Resources;
+using SASD.LearningManager.Domain.Common;
 using SASD.LearningManager.Domain.Providers;
 using SASD.LearningManager.Domain.Resources;
 
@@ -49,7 +50,15 @@ public sealed class ResourceCsvTransferService
         while (true)
         {
             var page = await _resourceService.SearchAsync(
-                new ResourceSearchCriteria(null, null, null, null, null, IncludeArchived: true, pageNumber, 500),
+                new ResourceSearchCriteria(
+                    SearchText: null,
+                    ProviderId: null,
+                    Type: null,
+                    Status: null,
+                    Priority: null,
+                    IncludeArchived: true,
+                    PageNumber: pageNumber,
+                    PageSize: 500),
                 cancellationToken).ConfigureAwait(false);
 
             foreach (var item in page.Items)
@@ -86,7 +95,11 @@ public sealed class ResourceCsvTransferService
             pageNumber++;
         }
 
-        await File.WriteAllTextAsync(filePath, CsvDocument.Write(Header, rows), new UTF8Encoding(encoderShouldEmitUTF8Identifier: true), cancellationToken)
+        await File.WriteAllTextAsync(
+                filePath,
+                CsvDocument.Write(Header, rows),
+                new UTF8Encoding(encoderShouldEmitUTF8Identifier: true),
+                cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -103,7 +116,9 @@ public sealed class ResourceCsvTransferService
         var document = CsvDocument.Read(csv);
         ValidateHeader(document.Header);
 
-        var providers = (await _providerService.ListAsync(includeArchived: false, cancellationToken).ConfigureAwait(false))
+        // Archived providers are included deliberately. If a CSV references one of them, the
+        // provider is restored before assignment instead of creating a conflicting duplicate name.
+        var providers = (await _providerService.ListAsync(includeArchived: true, cancellationToken).ConfigureAwait(false))
             .ToDictionary(static provider => provider.Name, StringComparer.OrdinalIgnoreCase);
 
         var created = 0;
@@ -112,7 +127,7 @@ public sealed class ResourceCsvTransferService
 
         for (var index = 0; index < document.Rows.Count; index++)
         {
-            var rowNumber = index + 2; // Header occupies physical/logical row one.
+            var rowNumber = index + 2; // Header occupies logical row one.
             var row = document.Rows[index];
 
             try
@@ -152,7 +167,7 @@ public sealed class ResourceCsvTransferService
                 skippedDuplicates++;
                 errors.Add(new ResourceCsvImportError(rowNumber, $"Duplicate URL skipped: {exception.Message}"));
             }
-            catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or FormatException)
+            catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or FormatException or DomainValidationException)
             {
                 errors.Add(new ResourceCsvImportError(rowNumber, exception.Message));
             }
@@ -174,6 +189,12 @@ public sealed class ResourceCsvTransferService
 
         if (providers.TryGetValue(normalized, out var existing))
         {
+            if (existing.Status == ProviderStatus.Archived)
+            {
+                await _providerService.RestoreAsync(existing.Id, cancellationToken).ConfigureAwait(false);
+                providers[normalized] = existing with { Status = ProviderStatus.Active };
+            }
+
             return existing.Id;
         }
 
@@ -312,6 +333,7 @@ public static class CsvDocument
                     {
                         index++;
                     }
+
                     CompleteRow(rows, row, field);
                     break;
                 case '\n':
