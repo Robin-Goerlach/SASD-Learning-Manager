@@ -20,4 +20,11 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Keep the shipped CSV example under CI: if the documented fixture drifts away from the
+         production import format, the application test below must fail before users see it. -->
+    <None Include="..\..\testdata\import\resources-chat-recommendations.csv"
+          Link="TestData\resources-chat-recommendations.csv"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
