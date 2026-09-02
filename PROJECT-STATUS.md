@@ -18,15 +18,15 @@ Build succeeded.
 0 Error(s)
 
 Domain.Tests          27 passed
-Application.Tests     33 passed
+Application.Tests     34 passed
 Infrastructure.Tests  12 passed
 Architecture.Tests     4 passed
-Total                 76 passed
+Total                 77 passed
 Failed                 0
 Skipped                0
 ```
 
-Der verifizierte Stand umfasst den M5-Backend-Review, die Lesbarkeits-/XML-Dokumentationsbereinigung sowie den neuen Ressourcen-CSV-Import/-Export. Maßgeblich war GitHub-Actions-Run #17; nach reinen Dokumentationsupdates muss der PR-Head weiterhin denselben vollständigen CI-Gate bestehen.
+Der verifizierte Stand umfasst den M5-Backend-Review, die Lesbarkeits-/XML-Dokumentationsbereinigung, den Ressourcen-CSV-Import/-Export und einen CI-Test, der den tatsächlich ausgelieferten Chat-Empfehlungsdatensatz vollständig durch den produktiven Import-Service laufen lässt. Maßgeblich ist GitHub-Actions-Run #21; nach den anschließenden reinen Dokumentationsupdates muss der PR-Head weiterhin denselben vollständigen CI-Gate bestehen.
 
 ## Implementiert
 
@@ -102,6 +102,7 @@ Der verifizierte Stand umfasst den M5-Backend-Review, die Lesbarkeits-/XML-Dokum
 - [x] CSV-Codec Regressionstests
 - [x] Application-Tests für Provideranlage, Tags, URL-Dubletten und Fehlerfortsetzung
 - [x] chat-basierter Testdatensatz unter `testdata/import/`
+- [x] ausgelieferter Testdatensatz selbst ist CI-gesichert und wird vollständig importiert
 
 ## Offene Qualitäts-/Repository-Themen
 
