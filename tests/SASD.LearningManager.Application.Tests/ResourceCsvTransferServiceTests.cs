@@ -98,6 +98,28 @@ public sealed class ResourceCsvTransferServiceTests
         }
     }
 
+    [Fact]
+    public async Task ImportAsync_ShippedChatRecommendationFixture_IsSchemaCompatible()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "TestData", "resources-chat-recommendations.csv");
+        Assert.True(File.Exists(path), $"The shipped CSV fixture was not copied to the test output: {path}");
+
+        var providers = new FakeProviderRepository();
+        var resources = new FakeResourceRepository();
+        var service = CreateService(providers, resources);
+
+        var report = await service.ImportAsync(path, TestContext.Current.CancellationToken);
+
+        // The fixture is intentionally substantial: this protects the actual hand-off data against
+        // column drift, invalid enum values, malformed quoting and accidental duplicate URLs.
+        Assert.True(report.TotalRows >= 25, $"Expected a substantial recommendation fixture, got {report.TotalRows} rows.");
+        Assert.Equal(report.TotalRows, report.Created);
+        Assert.Equal(0, report.SkippedDuplicates);
+        Assert.Empty(report.Errors);
+        Assert.Equal(report.TotalRows, resources.Items.Count);
+        Assert.NotEmpty(providers.Items);
+    }
+
     private static ResourceCsvTransferService CreateService(
         FakeProviderRepository providers,
         FakeResourceRepository resources)
