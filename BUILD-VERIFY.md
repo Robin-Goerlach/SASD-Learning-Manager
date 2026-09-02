@@ -41,7 +41,7 @@ Branch:
 feature/import-export-review
 ```
 
-GitHub Actions führt auf `windows-latest` mit .NET 8 aus:
+GitHub Actions führt auf Windows mit .NET 8 aus:
 
 ```powershell
 dotnet restore .\SASD.LearningManager.sln
@@ -49,7 +49,7 @@ dotnet build .\SASD.LearningManager.sln -c Release --no-restore
 dotnet test .\SASD.LearningManager.sln -c Release --no-build
 ```
 
-Ein Zwischenstand des Branches wurde am 02.09.2026 bereits erfolgreich mit folgendem Ergebnis geprüft:
+Der Branch wurde am 02.09.2026 nach dem CSV-Import-/Export-Review und den zusätzlichen Importtests erfolgreich verifiziert:
 
 ```text
 Build succeeded.
@@ -57,14 +57,15 @@ Build succeeded.
 0 Error(s)
 
 Domain.Tests          27 passed
-Application.Tests     30 passed
+Application.Tests     33 passed
 Infrastructure.Tests  12 passed
 Architecture.Tests     4 passed
-Total                 73 passed
+Total                 76 passed
 Failed                 0
+Skipped                0
 ```
 
-Danach wurden drei zusätzliche Application-Tests für das konkrete Resource-CSV-Importverhalten ergänzt. Für den finalen Branch werden daher **76 grüne Tests** erwartet; die letzte GitHub-Actions-Ausführung ist maßgeblich.
+Maßgeblich ist GitHub-Actions-Run **#17** auf Windows Server 2025 mit .NET SDK 8.0.424. Der Lauf enthält den produktiven WinForms-Build mit neuem `Daten`-Menü sowie alle vier Testprojekte.
 
 ## Was der aktuelle Gate abdeckt
 
