@@ -18,12 +18,15 @@ Build succeeded.
 0 Error(s)
 
 Domain.Tests          27 passed
-Application.Tests     30 passed
+Application.Tests     33 passed
 Infrastructure.Tests  12 passed
 Architecture.Tests     4 passed
-Total                 73 passed
+Total                 76 passed
 Failed                 0
+Skipped                0
 ```
+
+Der verifizierte Stand umfasst den M5-Backend-Review, die Lesbarkeits-/XML-Dokumentationsbereinigung sowie den neuen Ressourcen-CSV-Import/-Export. Maßgeblich war GitHub-Actions-Run #17; nach reinen Dokumentationsupdates muss der PR-Head weiterhin denselben vollständigen CI-Gate bestehen.
 
 ## Implementiert
 
@@ -81,6 +84,7 @@ Failed                 0
 - [x] Evidence↔Skill/Resource/Goal
 - [x] Migration `0005_knowledge_evidence.sql`
 - [x] Domain-/Infrastructure-Tests
+- [x] M5 Domain/Application-Code lesbar formatiert und zentrale öffentliche APIs XML-dokumentiert
 - [ ] Knowledge WinForms Workspace
 - [ ] Evidence WinForms Workspace
 - [ ] direkte SkillAssessment↔Evidence-Zuordnung
@@ -96,6 +100,7 @@ Failed                 0
 - [x] archivierte Provider werden bei Bedarf wiederhergestellt
 - [x] zeilenbezogener Importbericht
 - [x] CSV-Codec Regressionstests
+- [x] Application-Tests für Provideranlage, Tags, URL-Dubletten und Fehlerfortsetzung
 - [x] chat-basierter Testdatensatz unter `testdata/import/`
 
 ## Offene Qualitäts-/Repository-Themen
