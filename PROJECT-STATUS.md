@@ -1,60 +1,114 @@
 # Project Status – SASD Learning Manager
 
-**Stand:** 2026-08-28
+**Stand:** 2026-09-02
 
 ## Phase
 
-Implementation. **Milestone 0 bis Milestone 4 sind als Code-Stand umgesetzt; M4 Hotfix 001 behebt einen fehlerhaften Testquelltext-Export.**
+Implementation / funktionale Alpha. Milestone 0 bis Milestone 4 sind vollständig im WinForms-Client nutzbar. Milestone 5 besitzt ein technisch integriertes Knowledge-/Evidence-Backend; die dedizierten WinForms-Arbeitsbereiche sowie die direkte Evidence-Zuordnung zu Skill Assessments stehen noch aus.
 
-## Letzter bestätigter Build
+## Aktuell verifizierter Branch
 
-Milestone 3 auf Windows:
+`feature/import-export-review`
+
+GitHub Actions / Windows / .NET 8:
 
 ```text
-Build succeeded
+Build succeeded.
 0 Warning(s)
 0 Error(s)
-48 / 48 Tests grün
+
+Domain.Tests          27 passed
+Application.Tests     30 passed
+Infrastructure.Tests  12 passed
+Architecture.Tests     4 passed
+Total                 73 passed
+Failed                 0
 ```
 
-## Milestone 4 Hotfix 001
+## Implementiert
 
-- [x] Ursache des fehlgeschlagenen M4-Builds lokalisiert: ausschließlich `Application.Tests/TestDoubles.cs`, physische Zeile 275
-- [x] 112 versehentlich literal geschriebene `\n`-Sequenzen in echte Zeilenumbrüche zurückgeführt
-- [x] kompletter C#-Quelltext auf vergleichbare Escape-/Delimiter-Artefakte geprüft
-- [x] Migrationen 0001–0003 bytegleich zum bestätigten M3-Stand
-- [x] SQL-Zeilenenden künftig explizit LF
-- [x] Milestone-ZIPs künftig aus Git ausgeschlossen
+### M0 – Technische Baseline
 
-## Milestone 4 implementiert
+- [x] .NET 8 / WinForms / SQLite
+- [x] Domain / Application / Infrastructure / WinForms Layering
+- [x] DI, File Logging, Single Instance
+- [x] versionierte SQL-Migrationen
+- [x] Windows GitHub Actions CI
 
-- [x] Learning Paths
-- [x] Goal ↔ LearningPath
-- [x] hierarchische LearningPathNodes
+### M1 – Provider & Resources
+
+- [x] Providerverwaltung
+- [x] Canonical Resource Library
+- [x] Tags
+- [x] Status, Priorität und Fortschritt
+- [x] Suche, Filter und Paging
+- [x] sichere HTTP/HTTPS-URL-Behandlung
+
+### M2 – Quick Capture & Inbox
+
+- [x] `Ctrl+Shift+N`
+- [x] Inbox
+- [x] URL-Normalisierung und Dublettenwarnung
+- [x] Klassifikationsworkflow
+
+### M3 – Goals & Skills
+
+- [x] Goals
+- [x] Competency Areas und Topics
+- [x] Skills mit Current-/Target-Level und Gap
+- [x] Skill Assessments mit Historie
+- [x] Goal↔Skill / Taxonomie-Beziehungen
+
+### M4 – Learning Paths
+
+- [x] Learning Paths und Goal↔LearningPath
+- [x] hierarchische Nodes
 - [x] Required / Optional
-- [x] Node Type / Status / SortOrder
-- [x] Move Up / Down
-- [x] Parent-Wechsel mit Zyklenschutz
-- [x] Skill ↔ Node
-- [x] Resource ↔ Node
+- [x] Move Up / Down und Parent-Wechsel mit Zyklenschutz
+- [x] Skill↔Node und Resource↔Node
 - [x] Node Relations
 - [x] Subtree Archive / Restore
-- [x] Path Progress
+- [x] Core Progress
 - [x] TreeView Workspace
-- [x] Migration 0004
-- [x] neue Domain/Application/Infrastructure Tests
+- [x] Migration `0004_learning_paths.sql`
 
-## Erwarteter Testumfang M4
+### M5 – Knowledge & Evidence Backend
 
-64 Facts:
+- [x] KnowledgeArtifact Domain/Application/Persistence
+- [x] Markdown Content
+- [x] Knowledge↔Resource/Skill/Topic/Goal/LearningPath
+- [x] Evidence Domain/Application/Persistence
+- [x] Evidence↔Skill/Resource/Goal
+- [x] Migration `0005_knowledge_evidence.sql`
+- [x] Domain-/Infrastructure-Tests
+- [ ] Knowledge WinForms Workspace
+- [ ] Evidence WinForms Workspace
+- [ ] direkte SkillAssessment↔Evidence-Zuordnung
 
-- Domain 23
-- Application 26
-- Infrastructure 11
-- Architecture 4
+### Portable Resource CSV
 
-Der M4-Windows-Build/Test ist nach Auslieferung auszuführen.
+- [x] Menü `Daten`
+- [x] Ressourcenimport aus CSV
+- [x] Ressourcenexport nach CSV
+- [x] UTF-8/BOM und RFC-4180-Quoting
+- [x] vorhandene Canonical-URL-Dublettenerkennung wird benutzt
+- [x] fehlende Provider werden kontrolliert angelegt
+- [x] archivierte Provider werden bei Bedarf wiederhergestellt
+- [x] zeilenbezogener Importbericht
+- [x] CSV-Codec Regressionstests
+- [x] chat-basierter Testdatensatz unter `testdata/import/`
 
-## Als Nächstes
+## Offene Qualitäts-/Repository-Themen
 
-Nach grünem M4-Build: **Milestone 5 – Knowledge & Evidence**.
+- Das Repository enthält weiterhin versehentlich eingecheckte `SASD.Bewerbungsmanager.*`-Dateien. Diese Altlast sollte in einem separaten Cleanup-Commit entfernt werden, nicht zusammen mit fachlichen Features.
+- Eine ältere Milestone-ZIP ist noch getrackt und sollte beim Repository-Cleanup entfernt werden.
+- M5-WinForms fehlt noch.
+- Backup/Restore, globales Dashboard/Search und Release-Hardening sind noch keine abgeschlossenen V1-Funktionen.
+
+## Nächste empfohlene Schritte
+
+1. Import/Export-PR nach erfolgreichem Review in `main` übernehmen.
+2. Repository-Altlasten separat bereinigen.
+3. M5 fertigstellen: **Wissen**, **Evidence**, Assessment↔Evidence.
+4. Danach Dashboard/Search.
+5. Danach Backup/Restore/Import-Paketformat und Release-Hardening.
