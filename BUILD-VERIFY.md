@@ -49,7 +49,7 @@ dotnet build .\SASD.LearningManager.sln -c Release --no-restore
 dotnet test .\SASD.LearningManager.sln -c Release --no-build
 ```
 
-Der Branch wurde am 02.09.2026 nach dem CSV-Import-/Export-Review und den zusätzlichen Importtests erfolgreich verifiziert:
+Der funktionale Branch-Stand wurde am 02.09.2026 nach dem CSV-Import-/Export-Review und dem direkten Test des ausgelieferten Chat-Empfehlungsdatensatzes erfolgreich verifiziert:
 
 ```text
 Build succeeded.
@@ -57,15 +57,15 @@ Build succeeded.
 0 Error(s)
 
 Domain.Tests          27 passed
-Application.Tests     33 passed
+Application.Tests     34 passed
 Infrastructure.Tests  12 passed
 Architecture.Tests     4 passed
-Total                 76 passed
+Total                 77 passed
 Failed                 0
 Skipped                0
 ```
 
-Maßgeblich ist GitHub-Actions-Run **#17** auf Windows Server 2025 mit .NET SDK 8.0.424. Der Lauf enthält den produktiven WinForms-Build mit neuem `Daten`-Menü sowie alle vier Testprojekte.
+Maßgeblich ist GitHub-Actions-Run **#21** auf Windows Server 2025 mit .NET SDK 8.0.424. Der Lauf enthält den produktiven WinForms-Build mit neuem `Daten`-Menü, alle vier Testprojekte und den Import der tatsächlich ausgelieferten Datei `testdata/import/resources-chat-recommendations.csv` durch den produktiven Application Service.
 
 ## Was der aktuelle Gate abdeckt
 
@@ -75,6 +75,7 @@ Maßgeblich ist GitHub-Actions-Run **#17** auf Windows Server 2025 mit .NET SDK 
 - Knowledge/Evidence Persistence Smoke Tests
 - CSV-Codec: Quotes, Kommas, BOM, eingebettete Zeilenumbrüche und fehlerhafte Spaltenzahl
 - Resource-CSV-Import: Provideranlage, Tags, Canonical-URL-Dublette und zeilenbezogene Fehlerfortsetzung
+- Import der mitgelieferten Chat-Empfehlungs-CSV als echtes CI-Fixture
 - Architecture Tests
 - WinForms-Kompilierung mit neuem `Daten`-Menü
 
