@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SASD.LearningManager.Application.ImportExport;
 using SASD.LearningManager.Application.Resources;
 using SASD.LearningManager.Infrastructure.Configuration;
 using SASD.LearningManager.WinForms.Views;
@@ -6,8 +7,8 @@ using SASD.LearningManager.WinForms.Views;
 namespace SASD.LearningManager.WinForms.Forms;
 
 /// <summary>
-/// Main application shell. Milestone 4 activates Learning Paths with a hierarchical editor while
-/// retaining Goals, Skills, Resource Library, Inbox and global Quick Capture.
+/// Main application shell. It owns global navigation, Quick Capture and application-wide commands
+/// such as portable CSV import/export while delegating business work to application services.
 /// </summary>
 public sealed class MainForm : Form
 {
@@ -17,6 +18,7 @@ public sealed class MainForm : Form
     private readonly ResourcesView _resourcesView;
     private readonly InboxView _inboxView;
     private readonly ResourceService _resourceService;
+    private readonly ResourceCsvTransferService _csvTransferService;
     private readonly ILogger<MainForm> _logger;
     private readonly Panel _contentPanel = new() { Dock = DockStyle.Fill };
     private readonly Label _titleLabel = new()
@@ -25,12 +27,14 @@ public sealed class MainForm : Form
         Font = new Font("Segoe UI", 16F, FontStyle.Bold),
         Text = "Ressourcen"
     };
+
     private Button? _goalsButton;
     private Button? _skillsButton;
     private Button? _learningPathsButton;
     private Button? _resourcesButton;
     private Button? _inboxButton;
 
+    /// <summary>Creates the main shell and wires navigation plus global application commands.</summary>
     public MainForm(
         GoalsView goalsView,
         SkillsView skillsView,
@@ -38,6 +42,7 @@ public sealed class MainForm : Form
         ResourcesView resourcesView,
         InboxView inboxView,
         ResourceService resourceService,
+        ResourceCsvTransferService csvTransferService,
         ILogger<MainForm> logger,
         ApplicationPaths paths)
     {
@@ -47,6 +52,7 @@ public sealed class MainForm : Form
         _resourcesView = resourcesView;
         _inboxView = inboxView;
         _resourceService = resourceService;
+        _csvTransferService = csvTransferService;
         _logger = logger;
 
         Text = "SASD Learning Manager";
@@ -57,9 +63,12 @@ public sealed class MainForm : Form
         AutoScaleMode = AutoScaleMode.Dpi;
         KeyPreview = true;
 
+        var menu = BuildMenu();
+        MainMenuStrip = menu;
         Controls.Add(BuildContent());
         Controls.Add(BuildSidebar());
         Controls.Add(BuildStatus(paths));
+        Controls.Add(menu);
 
         KeyDown += async (_, args) =>
         {
@@ -71,6 +80,29 @@ public sealed class MainForm : Form
         };
 
         ShowGoals();
+    }
+
+    private MenuStrip BuildMenu()
+    {
+        var menu = new MenuStrip();
+        var fileMenu = new ToolStripMenuItem("Datei");
+        var dataMenu = new ToolStripMenuItem("Daten");
+
+        var importResources = new ToolStripMenuItem("Ressourcen aus CSV importieren …");
+        importResources.Click += async (_, _) => await ImportResourcesAsync().ConfigureAwait(true);
+
+        var exportResources = new ToolStripMenuItem("Ressourcen als CSV exportieren …");
+        exportResources.Click += async (_, _) => await ExportResourcesAsync().ConfigureAwait(true);
+
+        var exit = new ToolStripMenuItem("Beenden");
+        exit.Click += (_, _) => Close();
+
+        dataMenu.DropDownItems.Add(importResources);
+        dataMenu.DropDownItems.Add(exportResources);
+        fileMenu.DropDownItems.Add(exit);
+        menu.Items.Add(fileMenu);
+        menu.Items.Add(dataMenu);
+        return menu;
     }
 
     private Control BuildSidebar()
@@ -126,6 +158,7 @@ public sealed class MainForm : Form
         _inboxButton.Click += (_, _) => ShowInbox();
         nav.Controls.Add(_inboxButton);
 
+        // M5 backend services exist, while their dedicated WinForms workspaces are still pending.
         nav.Controls.Add(CreateNavButton("Wissen", enabled: false));
         nav.Controls.Add(CreateNavButton("Evidence", enabled: false));
         nav.Controls.Add(CreateNavButton("Datenpflege", enabled: false));
@@ -186,20 +219,15 @@ public sealed class MainForm : Form
     {
         SetSelectedNavigation(_goalsButton);
         _titleLabel.Text = "Lernziele";
-        _contentPanel.Controls.Clear();
-        _goalsView.Dock = DockStyle.Fill;
-        _contentPanel.Controls.Add(_goalsView);
+        ShowContent(_goalsView);
         _ = _goalsView.RefreshAsync();
     }
-
 
     private void ShowLearningPaths()
     {
         SetSelectedNavigation(_learningPathsButton);
         _titleLabel.Text = "Learning Paths";
-        _contentPanel.Controls.Clear();
-        _learningPathsView.Dock = DockStyle.Fill;
-        _contentPanel.Controls.Add(_learningPathsView);
+        ShowContent(_learningPathsView);
         _ = _learningPathsView.RefreshAsync();
     }
 
@@ -207,9 +235,7 @@ public sealed class MainForm : Form
     {
         SetSelectedNavigation(_skillsButton);
         _titleLabel.Text = "Skills & Kompetenzlücken";
-        _contentPanel.Controls.Clear();
-        _skillsView.Dock = DockStyle.Fill;
-        _contentPanel.Controls.Add(_skillsView);
+        ShowContent(_skillsView);
         _ = _skillsView.RefreshAsync();
     }
 
@@ -217,9 +243,7 @@ public sealed class MainForm : Form
     {
         SetSelectedNavigation(_resourcesButton);
         _titleLabel.Text = "Ressourcenbibliothek";
-        _contentPanel.Controls.Clear();
-        _resourcesView.Dock = DockStyle.Fill;
-        _contentPanel.Controls.Add(_resourcesView);
+        ShowContent(_resourcesView);
         _ = _resourcesView.RefreshAsync();
     }
 
@@ -227,10 +251,15 @@ public sealed class MainForm : Form
     {
         SetSelectedNavigation(_inboxButton);
         _titleLabel.Text = "Inbox";
-        _contentPanel.Controls.Clear();
-        _inboxView.Dock = DockStyle.Fill;
-        _contentPanel.Controls.Add(_inboxView);
+        ShowContent(_inboxView);
         _ = _inboxView.RefreshAsync();
+    }
+
+    private void ShowContent(Control control)
+    {
+        _contentPanel.Controls.Clear();
+        control.Dock = DockStyle.Fill;
+        _contentPanel.Controls.Add(control);
     }
 
     private void SetSelectedNavigation(Button? selected)
@@ -266,5 +295,78 @@ public sealed class MainForm : Form
         // positive feedback without forcing the user to classify the entry right away.
         ShowInbox();
         await _inboxView.RefreshAsync().ConfigureAwait(true);
+    }
+
+    private async Task ImportResourcesAsync()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Ressourcen aus CSV importieren",
+            Filter = "CSV-Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*",
+            CheckFileExists = true,
+            Multiselect = false
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        try
+        {
+            var report = await _csvTransferService.ImportAsync(dialog.FileName).ConfigureAwait(true);
+            var diagnostics = report.Errors.Count == 0
+                ? "Keine Importhinweise."
+                : string.Join(Environment.NewLine, report.Errors.Take(10).Select(error => $"Zeile {error.RowNumber}: {error.Message}"));
+
+            if (report.Errors.Count > 10)
+            {
+                diagnostics += $"{Environment.NewLine}… und {report.Errors.Count - 10} weitere Hinweise.";
+            }
+
+            MessageBox.Show(
+                this,
+                $"CSV-Import abgeschlossen.\n\nZeilen: {report.TotalRows}\nNeu angelegt: {report.Created}\nURL-Dubletten übersprungen: {report.SkippedDuplicates}\nHinweise/Fehler: {report.Errors.Count}\n\n{diagnostics}",
+                "Ressourcen importieren",
+                MessageBoxButtons.OK,
+                report.Errors.Count == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+            ShowResources();
+            await _resourcesView.RefreshAsync().ConfigureAwait(true);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or FormatException)
+        {
+            _logger.LogWarning(exception, "Resource CSV import failed for {FilePath}", dialog.FileName);
+            MessageBox.Show(this, exception.Message, "CSV-Import fehlgeschlagen", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private async Task ExportResourcesAsync()
+    {
+        using var dialog = new SaveFileDialog
+        {
+            Title = "Ressourcen als CSV exportieren",
+            Filter = "CSV-Dateien (*.csv)|*.csv",
+            AddExtension = true,
+            DefaultExt = "csv",
+            FileName = $"sasd-learning-resources-{DateTime.Now:yyyyMMdd}.csv",
+            OverwritePrompt = true
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        try
+        {
+            await _csvTransferService.ExportAsync(dialog.FileName).ConfigureAwait(true);
+            MessageBox.Show(this, $"Export erfolgreich:\n{dialog.FileName}", "Ressourcen exportieren", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            _logger.LogWarning(exception, "Resource CSV export failed for {FilePath}", dialog.FileName);
+            MessageBox.Show(this, exception.Message, "CSV-Export fehlgeschlagen", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }

@@ -16,6 +16,6 @@
   ],
   "defaultBranch": "main",
   "licenseStatus": "not yet decided",
-  "status": "Milestone 4 implemented; Hotfix 001 applied; Windows build/test pending",
-  "current_milestone": 4
+  "status": "Milestone 5 backend implemented; Knowledge/Evidence WinForms pending; resource CSV import/export in review",
+  "current_milestone": 5
 }

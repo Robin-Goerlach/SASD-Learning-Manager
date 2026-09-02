@@ -1,8 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using SASD.LearningManager.Application.Abstractions;
 using SASD.LearningManager.Application.Competencies;
-using SASD.LearningManager.Application.Goals;
 using SASD.LearningManager.Application.Evidence;
+using SASD.LearningManager.Application.Goals;
+using SASD.LearningManager.Application.ImportExport;
 using SASD.LearningManager.Application.Knowledge;
 using SASD.LearningManager.Application.LearningPaths;
 using SASD.LearningManager.Application.Providers;
@@ -15,9 +16,14 @@ using SASD.LearningManager.Infrastructure.Time;
 
 namespace SASD.LearningManager.Infrastructure.DependencyInjection;
 
-/// <summary>Registers the V1 local infrastructure adapters and application services.</summary>
+/// <summary>
+/// Registers local V1 infrastructure adapters together with the application services that use
+/// those adapters. Keeping this composition root in Infrastructure prevents WinForms from knowing
+/// concrete repository or SQLite implementation types.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>Adds the Learning Manager persistence, file-system and application-service graph.</summary>
     public static IServiceCollection AddLearningManagerInfrastructure(this IServiceCollection services, string databasePath)
     {
         services.AddSingleton(new SqliteConnectionFactory(databasePath));
@@ -34,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IResourceRepository, ResourceRepository>();
         services.AddTransient<IKnowledgeArtifactRepository, KnowledgeArtifactRepository>();
         services.AddTransient<IEvidenceRepository, EvidenceRepository>();
+
         services.AddTransient<ProviderService>();
         services.AddTransient<CompetencyCatalogService>();
         services.AddTransient<SkillService>();
@@ -42,6 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ResourceService>();
         services.AddTransient<KnowledgeArtifactService>();
         services.AddTransient<EvidenceService>();
+        services.AddTransient<ResourceCsvTransferService>();
         return services;
     }
 }

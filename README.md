@@ -2,8 +2,8 @@
 
 > Persönlicher, anbieterunabhängiger Learning-Portfolio- und Competency-Manager für strukturierte Weiterbildung.
 
-**Status:** Milestone 0 bis Milestone 4 – implementierter Code-Stand (M4 Hotfix 001)  
-**Stand:** 2026-08-28  
+**Status:** Milestone 0 bis Milestone 5 Backend implementiert; Knowledge/Evidence WinForms noch offen  
+**Stand:** 2026-09-02  
 **Zielplattform:** Windows 11  
 **Technologie:** C# / .NET 8 / Windows Forms / SQLite  
 **Entwicklungsstandard:** SASD Development Standard
@@ -62,26 +62,63 @@ V1 soll ermöglichen:
 
 Nicht V1: eigener PDF-/Video-Reader, Cloud Sync, Mehrbenutzerbetrieb, Provider-Login, AI als Kernabhängigkeit, vollständiges SRS oder öffentliche Community.
 
+## Aktueller Implementierungsstand
+
+### Verfügbar im WinForms-Client
+
+- Providerverwaltung
+- Ressourcenbibliothek mit Suche, Filtern und Paging
+- Resource Editor mit Tags, URL, LocalPath, Progress, Status und Priorität
+- Quick Capture (`Ctrl+Shift+N`) und Inbox
+- URL-Normalisierung und Canonical-Resource-Dublettenerkennung
+- Goals mit Skill-Zuordnung
+- Competency Areas und Topics
+- Skills mit Current-/Target-Level, Skill Gap und Assessment-Historie
+- Learning Paths mit hierarchischen Nodes
+- Required/Optional und Core Progress
+- Node↔Skill- und Node↔Resource-Zuordnungen
+- Node-Relationen und Zyklenschutz
+- Ressourcen-Import/-Export als portable CSV über das Menü `Daten`
+
+### M5 Backend vorhanden
+
+Milestone 5 ergänzt die fachliche und persistente Basis für:
+
+- Markdown-basierte Knowledge Artifacts
+- Knowledge↔Resource/Skill/Topic/Goal/LearningPath
+- Evidence mit Typ, Datum, URL/LocalPath und Evaluation
+- Evidence↔Skill/Resource/Goal
+- Archivieren/Wiederherstellen von Knowledge und Evidence
+- Migration `0005_knowledge_evidence.sql`
+
+Die dedizierten WinForms-Arbeitsbereiche **Wissen** und **Evidence** sind noch nicht implementiert und bleiben in der Navigation deaktiviert. Ebenfalls offen ist die direkte Evidence-Zuordnung zu einem einzelnen Skill Assessment. Evidence verändert Skill Mastery weiterhin ausdrücklich nicht automatisch.
+
+### CSV-Import/-Export
+
+Über das Menü:
+
+```text
+Daten
+├── Ressourcen aus CSV importieren …
+└── Ressourcen als CSV exportieren …
+```
+
+kann die Ressourcenbibliothek ohne direkte SQLite-Manipulation übertragen werden. Der Import verwendet die normalen Application Services, legt fehlende Provider kontrolliert an, respektiert URL-Dubletten und meldet fehlerhafte Zeilen einzeln.
+
+Dokumentation: [`docs/user/RESOURCE-CSV-IMPORT-EXPORT.md`](docs/user/RESOURCE-CSV-IMPORT-EXPORT.md)
+
+Chat-basierte Testdaten: [`testdata/import/resources-chat-recommendations.csv`](testdata/import/resources-chat-recommendations.csv)
+
 ## Repository-Struktur
 
 ```text
 /
 ├── .github/
-│   └── ISSUE_TEMPLATE/
 ├── assets/
 ├── docs/
-│   ├── research/
-│   ├── requirements/
-│   ├── architecture/
-│   ├── decisions/
-│   ├── testing/
-│   ├── security/
-│   ├── operations/
-│   ├── governance/
-│   ├── release/
-│   └── user/
 ├── src/                  # Domain / Application / Infrastructure / WinForms
 ├── tests/                # Domain / Application / Infrastructure / Architecture Tests
+├── testdata/             # portable Import-Testdaten
 ├── PROJECT-BRIEF.md
 ├── PROJECT-STATUS.md
 ├── ROADMAP.md
@@ -89,78 +126,22 @@ Nicht V1: eigener PDF-/Video-Reader, Cloud Sync, Mehrbenutzerbetrieb, Provider-L
 └── GITHUB-SETUP.md
 ```
 
+> Hinweis: Das Repository enthält aktuell noch versehentlich eingecheckte Dateien eines anderen SASD-Projekts (`SASD.Bewerbungsmanager`). Diese Altlast wird separat bereinigt und gehört nicht zur Learning-Manager-Solution.
+
 ## Dokumente
 
 Siehe [`DOCUMENTATION-INDEX.md`](DOCUMENTATION-INDEX.md).
 
-## Aktueller Implementierungsstand
+## Milestones
 
-Milestone 0 bis Milestone 4 sind als Code-Stand enthalten. **M4 Hotfix 001** behebt einen beschädigten Testdouble-Quelltext aus der ersten M4-ZIP; die produktiven M4-Assemblies hatten im gemeldeten Windows-Build bereits kompiliert. Der M3-Stand wurde auf Windows mit 0 Warnungen, 0 Fehlern und 48/48 grünen Tests bestätigt. Implementiert sind derzeit:
-
-- Providerverwaltung
-- Ressourcenbibliothek
-- Ressource anlegen und bearbeiten
-- Tags
-- Suche, Filter und Paging
-- Fortschritt, Status und Priorität
-- sichere HTTP/HTTPS-URL-Öffnung
-- URL-Dublettenwarnung
-- Archivieren und Wiederherstellen
-- SQLite-Migrationen und ActivityLog
-- lokale Logs und Single-Instance-Schutz
-- Goals mit Skill-Zuordnung
-- Competency Areas und Topics
-- Skills mit Current-/Target-Level und Skill Gap
-- append-only Skill Assessments mit Historie
-- Learning Paths mit TreeView-basierter Hierarchie
-- Required/Optional Nodes und Core Progress
-- Node↔Skill- und Node↔Resource-Zuordnungen
-- Node-Relationen und Zyklenschutz
-
-Ziele, Lernpfade, Skills, Ressourcen und Inbox sind aktiv. Wissen, Evidence und weitere Bereiche bleiben bis zu ihren Milestones sichtbar, aber deaktiviert.
-
-Details zu den implementierten Ständen stehen unter `docs/development/`, zuletzt in [`MILESTONE-4-IMPLEMENTATION.md`](docs/development/MILESTONE-4-IMPLEMENTATION.md).
-
-## Milestone 2 – Quick Capture & Inbox
-
-Aktuell zusätzlich nutzbar:
-
-- `Ctrl+Shift+N` für schnelles URL-Capture
-- optionale Titel-/Capture-Notiz
-- automatische Inbox
-- URL-Dublettenprüfung mit expliziter Konfliktentscheidung
-- Inbox-Suche und Paging
-- Klassifikation in den vollständigen Resource Editor
-- reversibles Verwerfen/Archivieren
-
-## Milestone 3 – Goals & Skills
-
-Neu in diesem Stand:
-
-- Lernziele mit Typ, Status, Priorität, Zieldatum und Next Action
-- Competency Areas und Topics
-- Skills mit qualitativer 1..5-Skala
-- getrenntes Current-/Target-Level
-- berechneter Skill Gap
-- explizite Skillbewertung mit Historie
-- Goal↔Skill ohne automatische Mastery-Änderung
-
-Details: [`docs/development/MILESTONE-3-IMPLEMENTATION.md`](docs/development/MILESTONE-3-IMPLEMENTATION.md).
-
-## Milestone 4 – Learning Paths
-
-Neu in diesem Stand:
-
-- Learning-Path-Library und Editor
-- hierarchische Nodes mit Parent/Child
-- Required/Optional
-- Skill- und Resource-Zuordnung
-- Move Up/Down und Parent-Wechsel mit Zyklenschutz
-- Subtree-Archivierung
-- Node-Relationen wie `Requires`, `AlternativeTo` und `Deepens`
-- Core Progress getrennt von optionalen Inhalten
-
-Details: [`docs/development/MILESTONE-4-IMPLEMENTATION.md`](docs/development/MILESTONE-4-IMPLEMENTATION.md).
+- **M0** – technische Baseline
+- **M1** – Provider & Resource Library
+- **M2** – Quick Capture & Inbox
+- **M3** – Goals & Skills
+- **M4** – Learning Paths
+- **M5** – Knowledge & Evidence Backend; WinForms noch offen
+- **nächster Produktschritt** – Knowledge/Evidence UI und direkte Assessment-Evidence-Zuordnung
+- danach Dashboard/Search sowie Reliability/Backup/Restore
 
 ## Build und Tests
 
@@ -172,7 +153,7 @@ dotnet test .\SASD.LearningManager.sln -c Release --no-build
 
 Ziel: **0 Fehler, 0 Warnungen, alle Tests grün**.
 
-Eine ausführliche Verifikation steht in [`BUILD-VERIFY.md`](BUILD-VERIFY.md). GitHub Actions führt denselben Restore-/Build-/Test-Flow auf Windows aus.
+Der Import/Export-Review-Branch wurde am 02.09.2026 in GitHub Actions auf Windows mit **0 Warnungen, 0 Fehlern und 73/73 grünen Tests** verifiziert. Details stehen in [`BUILD-VERIFY.md`](BUILD-VERIFY.md).
 
 ## Datenpfad
 
@@ -188,7 +169,7 @@ Eine ausführliche Verifikation steht in [`BUILD-VERIFY.md`](BUILD-VERIFY.md). G
 
 Die empfohlene Repository-Konfiguration, Topics und Branch-Protection-Hinweise stehen in [`GITHUB-SETUP.md`](GITHUB-SETUP.md).
 
-Die Produktlizenz ist in der Spezifikationsphase noch bewusst offen und wird vor einem öffentlichen Release entschieden.
+Die Produktlizenz ist während der Implementierungs-/Pilotphase noch bewusst offen und wird vor einem öffentlichen Release entschieden.
 
 ## Entwicklungsstandard
 
