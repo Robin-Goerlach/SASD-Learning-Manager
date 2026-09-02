@@ -16,6 +16,7 @@
 - chat-basierter Import-Testdatensatz unter `testdata/import/resources-chat-recommendations.csv`.
 - Benutzeranleitung `docs/user/RESOURCE-CSV-IMPORT-EXPORT.md`.
 - zusätzliche Application-Tests für CSV-Codec und Importverhalten.
+- CI-Test, der den tatsächlich ausgelieferten Chat-Empfehlungsdatensatz durch den produktiven CSV-Importer laufen lässt.
 
 - Milestone 4: Learning Paths mit hierarchischen Nodes.
 - Required/Optional Nodes und Core-Progress-Berechnung.
@@ -69,7 +70,7 @@
 
 ### Verification
 
-Der Import/Export-Review-Branch wurde am 02.09.2026 in GitHub Actions auf Windows erfolgreich gebaut und getestet:
+Der Import/Export-Review-Branch wurde am 02.09.2026 in GitHub Actions auf Windows erfolgreich gebaut und getestet. Der finale funktionale Lauf importiert zusätzlich die wirklich ausgelieferte CSV-Testdatei vollständig über den Application Service:
 
 ```text
 Build succeeded.
@@ -77,10 +78,12 @@ Build succeeded.
 0 Error(s)
 
 Domain.Tests          27 passed
-Application.Tests     33 passed
+Application.Tests     34 passed
 Infrastructure.Tests  12 passed
 Architecture.Tests     4 passed
-Total                 76 passed
+Total                 77 passed
+Failed                 0
+Skipped                0
 ```
 
 ### Security
